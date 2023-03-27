@@ -3,8 +3,9 @@ const router = express.Router();
 const CityOverview = require("../models/CityOverview");
 const { isAuthenticated, isAdmin } = require("../middlewares/jwt");
 
-
-// GET /city-overviews
+// @desc    get all cityOverviews 
+// @route   GET /api/v1/city-overview"
+// @access  Public
 router.get("/", async (req, res) => {
   try {
     const cityOverviews = await CityOverview.find();
@@ -15,12 +16,27 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET /city-overviews/:city
+// @desc    most Searched cityOverview
+// @route   GET /api/v1//city-overview/mostSearched"
+// @access  Public
+router.get("/mostSearched", async (req, res) => {
+  try {
+    const cityOverviews = await CityOverview.find().sort({ numSearches: -1 }).limit(4);
+    res.json(cityOverviews);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error en el servidor");
+  }
+});
 
+
+// @desc    get cityOverview by cityname
+// @route   GET /api/v1/city-overview/:city
+// @access  Public
 router.get("/:city", async (req, res) => {
   try {
     const { city } = req.params;
-    let cityOverview = await CityOverview.findOne({ cityName: city });
+    let cityOverview = await CityOverview.findOne({ cityName: city.charAt(0).toUpperCase() + city.slice(1).toLowerCase() });
 
     if (!cityOverview) {
       // Si no se encuentra un documento en la base de datos, devolver un error
@@ -34,8 +50,9 @@ router.get("/:city", async (req, res) => {
   }
 });
 
-
-// GET /city-overviews/:id
+// @desc    Get city by ID
+// @route   GET /api/v1/city-overview/:id
+// @access  Public
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -52,7 +69,10 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// POST /users/city-overviews/:cityOverviewId- añadir a los favoritos
+
+// @desc    Adding favorite city to user account
+// @route   POST /api/v1/city-overview/:cityOverviewId
+// @access  Private/user
 router.post("/:cityOverviewId", async (req, res) => {
   try {
     const { cityOverviewId } = req.params;
@@ -82,43 +102,20 @@ router.post("/:cityOverviewId", async (req, res) => {
   }
 });
 
-
-router.delete("/:id",isAuthenticated, async (req, res) => {
-  console.log(req.user);
+// @desc    Delete cityOverview from database
+// @route   DELETE /api/v1/city-overview/:id
+// @access  Private/isAdmin
+router.delete("/:id", isAdmin, async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    const user = req.user;
-    if (!user) {
-      return res.status(401).json({ msg: "Usuario no autentificado" });
-    }
-    const isAdminRequest = user.role === 'admin';
-    const userId = user.id;
-    const userDoc = await User.findById(userId);
-    const cityOverview = await CityOverview.findById(id);
-    if (!cityOverview) {
-      return res.status(404).json({ msg: "No se ha encontrado este destino" });
-    }
-    if (isAdminRequest) {
-      // Delete city overview from the database
-      await cityOverview.remove();
-      res.json({ msg: "Destino se ha eliminado de la base de datos" });
-    } else {
-      // Delete city overview from user account
-      if (!userDoc) {
-        return res.status(404).json({ msg: "No se ha encontrado este usuario" });
-      }
-      if (!userDoc.cityOverviews.includes(id)) {
-        return res.status(404).json({ msg: "No se ha encontrado el destino en la cuenta del usuario" });
-      }
-      userDoc.cityOverviews.pull(id);
-      await userDoc.save();
-      res.json({ msg: "Destino eliminado de la cuenta de usuario" });
-    }
+    const deletedCityOverview = await CityOverview.findByIdAndDelete( id );
+    res.status(200).json(deletedCityOverview);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Error en el servidor: " + err.message);
   }
 });
+
 
 
 

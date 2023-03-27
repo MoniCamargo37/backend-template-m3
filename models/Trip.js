@@ -22,11 +22,11 @@ const tripSchema = new Schema({
   },
   startDate: {
     type: Date,
-    required: true
+    // required: true
   },
   endDate: {
     type: Date,
-    required: true
+    // required: true
   },
   budget: {
     type: Number,
@@ -46,7 +46,7 @@ const tripSchema = new Schema({
   ],
   weather: {
     type: String,
-    required: true
+    // required: true
   }
 });
 

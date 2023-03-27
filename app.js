@@ -9,7 +9,8 @@ const cors = require('cors');
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const tripRouter = require('./routes/trip');
-cityOverviewRouter = require('./routes/cityOverview');
+const cityOverviewRouter = require('./routes/city-overview');
+const dayTripRouter = require('./routes/dayTrip');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/trip', tripRouter);
 app.use('/city-overview', cityOverviewRouter);
+app.use('/dayTrip', dayTripRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

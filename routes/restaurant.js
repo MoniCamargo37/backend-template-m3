@@ -14,4 +14,17 @@ router.get('/restaurants', async (req, res) => {
   }
 });
 
+// Ruta para crear un nuevo restaurante
+router.post('/restaurants', async (req, res) => {
+  const { name, foodType, city } = req.body;
+  const restaurant = new Restaurant({ name, foodType, city });
+
+  try {
+    await restaurant.save();
+    res.status(201).json(restaurant);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 module.exports = router;

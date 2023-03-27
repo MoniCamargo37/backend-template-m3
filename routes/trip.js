@@ -15,8 +15,8 @@ router.get('/', async (req, res, next) => {
 
   
 // @desc    Get a specific trip plan
-// @route   GET /courses/:courseId
-// @access  Private
+// @route   GET /trip/:tripId
+// @access  Private/ user 
 router.get('/:tripId', async (req, res, next) => {
   const { tripId } = req.params;
   try {
@@ -27,7 +27,7 @@ router.get('/:tripId', async (req, res, next) => {
   }
 });
 
-// @desc    Create one course
+// @desc    Create one trip plan
 // @route   POST /courses
 // @access  Public
 router.post('/', async (req, res, next) => {
@@ -39,24 +39,24 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// @desc    Edit one course
-// @route   PUT /courses/:courseId
+// @desc    Edit one trip
+// @route   PUT /trip/:tripId
 // @access  Public
 router.put('/:tripId', async (req, res, next) => {
   const { tripId } = req.params;
   try {
     const response = await Trip.findByIdAndUpdate(tripId, req.body, { new: true });
     console.log(response)
-    res.redirect(`/courses/${tripId}`) //==> only to see on Postman if we edited right
+    // res.redirect(`/courses/${tripId}`) //==> only to see on Postman if we edited right
     res.status(204).json({ message: 'OK' });
   } catch (error) {
     next(error)
   }
 });
 
-// @desc    Delete one course
-// @route   DELETE /courses/:courseId
-// @access  Public
+// @desc    Delete one trip plan 
+// @route   DELETE /trip/:tripId
+// @access  Private/ User
 router.delete('/:tripId', async (req, res, next) => {
   const { tripId } = req.params;
   try {
