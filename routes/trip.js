@@ -47,7 +47,7 @@ router.put('/:tripId', async (req, res, next) => {
   try {
     const response = await Trip.findByIdAndUpdate(tripId, req.body, { new: true });
     console.log(response)
-    res.redirect(`/courses/${courseId}`) //==> only to see on Postman if we edited right
+    res.redirect(`/courses/${tripId}`) //==> only to see on Postman if we edited right
     res.status(204).json({ message: 'OK' });
   } catch (error) {
     next(error)

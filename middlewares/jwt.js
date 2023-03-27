@@ -11,11 +11,18 @@ function getTokenFromHeaders(req) {
   return null;
 }
 
+// const isAuthenticated = jwt({
+//   secret: process.env.TOKEN_SECRET,
+//   algorithms: ["HS256"],
+//   requestProperty: 'payload',
+//   getToken: getTokenFromHeaders//token
+// });
+
 const isAuthenticated = jwt({
   secret: process.env.TOKEN_SECRET,
   algorithms: ["HS256"],
   requestProperty: 'payload',
-  getToken: getTokenFromHeaders//token
+  getToken: getTokenFromHeaders,
 });
 
 const isAdmin = (req, res, next) => {

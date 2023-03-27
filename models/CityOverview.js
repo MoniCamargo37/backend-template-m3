@@ -4,31 +4,31 @@ const { Schema, model } = mongoose;
 const cityOverviewSchema = new Schema({
   itineraryPic: {
     type: String,
-    required: true
+    // required: true
   },
   cityName: {
     type: String,
-    required: true
+    // required: true
   },
   description: {
     type: String,
-    required: true
+    // required: true
   },
   currency: {
     type: String,
-    required: true
+    // required: true
   },
   numSearches: {
     type: Number,
-    required: true
+    // required: true
   },
   location: {
     type: String,
-    required: true
+    // required: true
   },
   destinationPics: {
     type: [String],
-    required: true
+    // required: true
   }
 });
 
