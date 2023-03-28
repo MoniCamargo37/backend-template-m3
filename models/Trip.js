@@ -41,7 +41,7 @@ const tripSchema = new Schema({
   cityOverview: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'SummaryCity'
+      ref: 'CityOverview'
     }
   ],
   weather: {
