@@ -5,171 +5,254 @@ const CityOverview = require("../models/CityOverview");
 const Restaurant = require("../models/Restaurant");
 const DayTrip = require("../models/DayTrip");
 
-const cityOverview = [
+const cityOverviews = [
   {
-    itineraryPic: "https://example.com/madrid1.jpg",
-    cityName: "Madrid",
-    description: "Discover the vibrant capital of Spain",
-    currency: "EUR",
-    numSearches: 12345,
-    location: "40.4168° N, 3.7038° W",
-    destinationPics: [
-      "https://example.com/madrid1.jpg",
-      "https://example.com/madrid2.jpg",
-      "https://example.com/madrid3.jpg",
-    ],
+    itineraryPic: "roma.jpg",
+    cityName: "Roma",
+    description:
+      "La ciudad eterna con una impresionante arquitectura y gastronomía",
+    currency: "Euro",
+    numSearches: 1500,
+    location: "Italia",
+    destinationPics: ["roma1.jpg", "roma2.jpg"],
   },
   {
-    itineraryPic: "https://example.com/paris1.jpg",
-    cityName: "Paris",
-    description: "Experience the romantic city of lights",
-    currency: "EUR",
-    numSearches: 98765,
-    location: "48.8566° N, 2.3522° E",
-    destinationPics: [
-      "https://example.com/paris1.jpg",
-      "https://example.com/paris2.jpg",
-      "https://example.com/paris3.jpg",
-    ],
+    itineraryPic: "paris.jpg",
+    cityName: "París",
+    description:
+      "La ciudad del amor y la luz, con una rica cultura y belleza arquitectónica",
+    currency: "Euro",
+    numSearches: 1800,
+    location: "Francia",
+    destinationPics: ["paris1.jpg", "paris2.jpg"],
   },
   {
-    itineraryPic: "https://example.com/newyork1.jpg",
-    cityName: "New York",
-    description: "Explore the Big Apple",
-    currency: "USD",
-    numSearches: 54321,
-    location: "40.7128° N, 74.0060° W",
-    destinationPics: [
-      "https://example.com/newyork1.jpg",
-      "https://example.com/newyork2.jpg",
-      "https://example.com/newyork3.jpg",
-    ],
+    itineraryPic: "tokyo.jpg",
+    cityName: "Tokio",
+    description:
+      "La ciudad más grande del mundo, con una rica cultura y tecnología avanzada",
+    currency: "Yen",
+    numSearches: 1200,
+    location: "Japón",
+    destinationPics: ["tokyo1.jpg", "tokyo2.jpg"],
   },
   {
-    itineraryPic: "https://example.com/tokyo1.jpg",
-    cityName: "Tokyo",
-    description: "Experience the culture of Japan",
-    currency: "JPY",
-    numSearches: 24680,
-    location: "35.6762° N, 139.6503° E",
-    destinationPics: [
-      "https://example.com/tokyo1.jpg",
-      "https://example.com/tokyo2.jpg",
-      "https://example.com/tokyo3.jpg",
-    ],
+    itineraryPic: "santiago.jpg",
+    cityName: "Santiago",
+    description:
+      "La capital chilena, con una vibrante escena cultural y una ubicación impresionante en los Andes",
+    currency: "Peso chileno",
+    numSearches: 800,
+    location: "Chile",
+    destinationPics: ["santiago1.jpg", "santiago2.jpg"],
+  },
+  {
+    itineraryPic: "sydney.jpg",
+    cityName: "Sídney",
+    description:
+      "La ciudad más grande y cosmopolita de Australia, con una impresionante mezcla de playas y vida urbana",
+    currency: "Dólar australiano",
+    numSearches: 1000,
+    location: "Australia",
+    destinationPics: ["sydney1.jpg", "sydney2.jpg"],
+  },
+  {
+    itineraryPic: "singapore.jpg",
+    cityName: "Singapur",
+    description:
+      "La ciudad-estado más pequeña del mundo, con una rica cultura y una economía avanzada",
+    currency: "Dólar de Singapur",
+    numSearches: 900,
+    location: "Singapur",
+    destinationPics: ["singapore1.jpg", "singapore2.jpg"],
+  },
+  {
+    itineraryPic: "berlin.jpg",
+    cityName: "Berlín",
+    description:
+      "La capital de Alemania, con una vibrante escena cultural y una rica historia",
+    currency: "Euro",
+    numSearches: 1200,
+    location: "Alemania",
+    destinationPics: ["berlin1.jpg", "berlin2.jpg"],
+  },
+  {
+    itineraryPic: "amsterdam.jpg",
+    cityName: "Ámsterdam",
+    description:
+      "La ciudad de los canales, con una rica cultura y arquitectura distintiva",
+    currency: "Euro",
+    numSearches: 1000,
+    location: "Países Bajos",
+    destinationPics: ["amsterdam1.jpg", "amsterdam2.jpg"],
+  },
+  {
+    itineraryPic: "imagen4.jpg",
+    cityName: "Nueva York",
+    description: "La ciudad que nunca duerme",
+    currency: "Dólar estadounidense",
+    numSearches: 2000,
+    location: "Estados Unidos",
+    destinationPics: ["imagen5.jpg", "imagen6.jpg"],
   },
 ];
 
-const restaurants = [
-  { name: "El Botín", foodType: "Spanish cuisine", city: "Madrid" },
-  { name: "Le Jules Verne", foodType: "French cuisine", city: "Paris" },
-  { name: "La Pergola", foodType: "Italian cuisine", city: "Rome" },
-  { name: "Narisawa", foodType: "Japanese cuisine", city: "Tokyo" },
-];
-const restaurantsMap = new Map();
-restaurants.forEach((restaurant) => {
-  restaurantsMap.set(restaurant.name, restaurant._id);
-});
 
-const dayTrip = [
+const dayTrips = [
   {
-    activity1: "Visit the Prado Museum",
-    activity2: "Walk around Retiro Park",
-    activity3: "Explore the Royal Palace of Madrid",
-    restaurants: [restaurantsMap.get("El Botín"), restaurantsMap.get("Le Jules Verne")],
+    activity1: 'Visita a un museo',
+    activity2: 'Caminata por el parque',
+    activity3: 'Cena en un restaurante de sushi',
+    restaurant1: 'Sushi House',
+    restaurant2: 'Tokyo Sushi'
   },
   {
-    activity1: "Visit the Eiffel Tower",
-    activity2: "Walk around the Champs-Élysées",
-    activity3: "Explore the Louvre Museum",
-    restaurants: [restaurantsMap.get("Le Jules Verne"), restaurantsMap.get("La Pergola")],
+    activity1: 'Excursión en bote',
+    activity2: 'Visita a un faro',
+    activity3: 'Cena en un restaurante de mariscos',
+    restaurant1: 'The Lobster House',
+    restaurant2: 'The Crab Shack'
   },
   {
-    activity1: "Visit the Colosseum",
-    activity2: "Walk around the Roman Forum",
-    activity3: "Explore the Vatican Museums",
-    restaurants: [restaurantsMap.get("La Pergola")],
+    activity1: 'Recorrido por la ciudad',
+    activity2: 'Visita a una galería de arte',
+    activity3: 'Cena en un restaurante de comida mexicana',
+    restaurant1: 'Taco Time',
+    restaurant2: 'El Ranchito'
   },
+  {
+    activity1: 'Paseo en bicicleta',
+    activity2: 'Visita a un parque de atracciones',
+    activity3: 'Cena en un restaurante de comida italiana',
+    restaurant1: 'Pizza Time',
+    restaurant2: 'La Piazza'
+  },
+  {
+    activity1: 'Visita a una bodega',
+    activity2: 'Degustación de vinos',
+    activity3: 'Cena en un restaurante de comida francesa',
+    restaurant1: 'Le Bistro',
+    restaurant2: 'Le Croissant'
+  },
+  {
+    activity1: 'Visita a un jardín botánico',
+    activity2: 'Caminata por el bosque',
+    activity3: 'Cena en un restaurante de comida asiática',
+    restaurant1: 'Wok N Roll',
+    restaurant2: 'The Noodle House'
+  },
+  {
+    activity1: 'Visita a un monumento histórico',
+    activity2: 'Recorrido por la ciudad en bus',
+    activity3: 'Cena en un restaurante de comida española',
+    restaurant1: 'La Taberna',
+    restaurant2: 'El Cid'
+  },
+  {
+    activity1: 'Visita a un acuario',
+    activity2: 'Paseo en barco',
+    activity3: 'Cena en un restaurante de comida griega',
+    restaurant1: 'The Greek Place',
+    restaurant2: 'Opa!'
+  },
+  {
+    activity1: 'Recorrido por la playa',
+    activity2: 'Paseo en bote',
+    activity3: 'Cena en un restaurante de mariscos',
+    restaurant1: 'The Shrimp House',
+    restaurant2: 'The Oyster Bar'
+  },
+  {
+    activity1: 'Visita a un mercado local',
+    activity2: 'Recorrido por la ciudad en bicicleta',
+    activity3: 'Cena en un restaurante de comida vegetariana',
+    restaurant1: 'The Veggie Spot',
+    restaurant2: 'Green Cuisine'
+  }
 ];
 
-const trip = [
+
+const trips = [
   {
-    city: "Madrid",
-    itineraryPic: "https://example.com/madrid1.jpg",
+    city: 'Barcelona',
     tripDuration: 5,
     numTravellers: 2,
-    monthOfTrip: "July",
-    startDate: "2023-07-10",
-    endDate: "2023-07-15",
+    monthOfTrip: 'Julio',
+    startDate: '2023-07-10',
+    endDate: '2023-07-14',
+    tripType: 'pareja',
+    budget: 2000,
+    dayTrip: ['61f1e0d8c7984a152b0ef73f', '61f1e0d8c7984a152b0ef740'],
+    cityOverview: '61f1e0d8c7984a152b0ef741',
+    weather: 'soleado'
+  },
+  {
+    city: 'Tokio',
+    tripDuration: 7,
+    numTravellers: 4,
+    monthOfTrip: 'Agosto',
+    startDate: '2023-08-01',
+    endDate: '2023-08-07',
+    tripType: 'amigos',
+    budget: 5000,
+    dayTrip: ['61f1e0d8c7984a152b0ef742', '61f1e0d8c7984a152b0ef743'],
+    cityOverview: '61f1e0d8c7984a152b0ef744',
+    weather: 'lluvioso'
+  },
+  {
+    city: 'Nueva York',
+    tripDuration: 3,
+    numTravellers: 3,
+    monthOfTrip: 'Noviembre',
+    startDate: '2023-11-15',
+    endDate: '2023-11-17',
+    tripType: 'mayores',
     budget: 1500,
-    weather: "Sunny",
-    dayTrip: dayTrip.map((dt) => {
-      return {
-        activity1: dt.activity1,
-        activity2: dt.activity2,
-        activity3: dt.activity3,
-        restaurants: dt.restaurants.map((r) => dt.restaurants.map((r) => restaurantsMap.get(r))),
-      };
-    }),
-  }, 
+    dayTrip: ['61f1e0d8c7984a152b0ef745', '61f1e0d8c7984a152b0ef746'],
+    cityOverview: '61f1e0d8c7984a152b0ef747',
+    weather: 'frio'
+  },
+  {
+    city: 'París',
+    tripDuration: 4,
+    numTravellers: 2,
+    monthOfTrip: 'Abril',
+    startDate: '2023-04-20',
+    endDate: '2023-04-23',
+    tripType: 'pareja',
+    budget: 3000,
+    dayTrip: ['61f1e0d8c7984a152b0ef748', '61f1e0d8c7984a152b0ef749'],
+    cityOverview: '61f1e0d8c7984a152b0ef74a',
+    weather: 'lluvioso'
+  }
 ];
-
 mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => {
-    console.log("Connected to MongoDB");
-
-    return Promise.all([
-      CityOverview.create(cityOverview),
-      Restaurant.create(restaurants),
-      DayTrip.create(dayTrip),
-    ]);
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
-  .then(([cityOverviewDocs, restaurantDocs, dayTripDocs]) => {
-    console.log("Seed data created");
-
-    // Mapear los _id de los restaurantes en el campo restaurants de dayTrip
-    const dayTripMapped = dayTrip.map((dt) => {
-      return {
-        activity1: dt.activity1,
-        activity2: dt.activity2,
-        activity3: dt.activity3,
-        restaurants: dt.restaurants.map((r) => restaurantsMap.get(r)),
-      };
-    });
-
-    const tripMapped = trip.map((t) => {
-      return {
-        city: t.city,
-        itineraryPic: t.itineraryPic,
-        tripDuration: t.tripDuration,
-        numTravellers: t.numTravellers,
-        monthOfTrip: t.monthOfTrip,
-        startDate: t.startDate,
-        endDate: t.endDate,
-        budget: t.budget,
-        weather: t.weather,
-        dayTrip: dayTripMapped.map((dt) => {
-          return {
-            activity1: dt.activity1,
-            activity2: dt.activity2,
-            activity3: dt.activity3,
-            restaurants: dt.restaurants.map((restaurantId) => restaurantsMap.get(restaurantId)),
-          };
-        }),
-        cityOverview: cityOverviewDocs.find((c) => c.cityName === t.city)._id,
-      };
-    });
-
-    return Trip.create(tripMapped);
-  })
+  .then(() => console.log(`Connected to database`))
   .then(() => {
-    console.log("Trip seed data created");
+    // Crear los objetos CityOverview
+    return CityOverview.create(cityOverviews);
+  })
+  .then((createdCityOverviews) => {
+    console.log(`Created ${createdCityOverviews.length} CityOverviews`);
+    // Crear los objetos DayTrip
+    return DayTrip.create(dayTrips);
+  })
+  .then((createdDayTrips) => {
+    console.log(`Created ${createdDayTrips.length} DayTrips`);
+    // Crear los objetos Trip
+    return Trip.create(trips);
+  })
+  .then((createdTrips) => {
+    console.log(`Created ${createdTrips.length} Trips`);
   })
   .catch((error) => {
-    console.log(`Error seeding data: ${error}`);
+    console.log(`An error occurred: ${error}`);
   })
   .finally(() => {
-    console.log("Closing MongoDB connection");
-    mongoose.connection.close();
+    mongoose.disconnect();
+    console.log(`Disconnected from database`);
   });

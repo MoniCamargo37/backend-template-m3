@@ -28,6 +28,10 @@ const tripSchema = new Schema({
     type: Date,
     // required: true
   },
+  tripType: {
+    type: String,
+    enum: ['amigos', 'niños', 'pareja', 'mayores']
+  },
   budget: {
     type: Number,
     required: true

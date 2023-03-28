@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Trip = require('../models/Trip');
+const { isAuthenticated, isAdmin } = require('../middlewares/jwt');
 
 // @desc    Get all trip plan
 // @route   GET /trip plan
@@ -17,7 +18,7 @@ router.get('/', async (req, res, next) => {
 // @desc    Get a specific trip plan
 // @route   GET /trip/:tripId
 // @access  Private/ user 
-router.get('/:tripId', async (req, res, next) => {
+router.get('/:tripId',isAuthenticated, async (req, res, next) => {
   const { tripId } = req.params;
   try {
     const trip = await Trip.findById(tripId);
@@ -42,7 +43,7 @@ router.post('/', async (req, res, next) => {
 // @desc    Edit one trip
 // @route   PUT /trip/:tripId
 // @access  Public
-router.put('/:tripId', async (req, res, next) => {
+router.put('/:tripId',isAuthenticated, async (req, res, next) => {
   const { tripId } = req.params;
   try {
     const response = await Trip.findByIdAndUpdate(tripId, req.body, { new: true });
@@ -57,7 +58,7 @@ router.put('/:tripId', async (req, res, next) => {
 // @desc    Delete one trip plan 
 // @route   DELETE /trip/:tripId
 // @access  Private/ User
-router.delete('/:tripId', async (req, res, next) => {
+router.delete('/:tripId', isAuthenticated, async (req, res, next) => {
   const { tripId } = req.params;
   try {
     const deletedTrip = await Trip.findByIdAndDelete(tripId);
