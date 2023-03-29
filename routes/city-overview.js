@@ -7,15 +7,15 @@ const { isAuthenticated, isloggedIn,
 // @desc    get all cityOverviews 
 // @route   GET /api/v1/city-overview"
 // @access  Public
-// router.get("/", async (req, res) => {
-//   try {
-//     const cityOverviews = await CityOverview.find();
-//     res.json(cityOverviews);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Error en el servidor");
-//   }
-// });
+router.get("/", async (req, res) => {
+  try {
+    const cityOverviews = await CityOverview.find();
+    res.json(cityOverviews);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error en el servidor");
+  }
+});
 
 // @desc    most Searched cityOverview
 // @route   GET /api/v1//city-overview/mostSearched"
@@ -68,21 +68,21 @@ router.get("/:city", async (req, res) => {
 // @desc    Get city by ID
 // @route   GET /api/v1/city-overview/:id
 // @access  Public
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const cityOverview = await CityOverview.findById(id);
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cityOverview = await CityOverview.findById(id);
 
-//     if (!cityOverview) {
-//       return res.status(404).json({ msg: "No se ha encontrado este destino" });
-//     }
+    if (!cityOverview) {
+      return res.status(404).json({ msg: "No se ha encontrado este destino" });
+    }
 
-//     res.json(cityOverview);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server Error");
-//   }
-// });
+    res.json(cityOverview);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 
 // @desc    Adding favorite city to user account

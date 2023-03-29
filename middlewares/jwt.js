@@ -19,7 +19,8 @@ const isAuthenticated = jwt({
 });
 
 const isAdmin = (req, res, next) => {
-  // next(); check out what is going on with the middlewares
+  next(); 
+  // check out what is going on with the middlewares
   console.log(req.payload);
   if (req.payload.role === 'admin') {
     next()
