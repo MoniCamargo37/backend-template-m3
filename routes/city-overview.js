@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const CityOverview = require("../models/CityOverview");
-const { isAuthenticated, isloggedIn,
+const { isAuthenticated,
   isAdmin } = require("../middlewares/jwt");
 
 // @desc    get all cityOverviews 
@@ -38,7 +38,6 @@ router.get("/:city", async (req, res) => {
   try {
     const { city } = req.params;
     let cityOverview = await CityOverview.findOne({ cityName: city.charAt(0).toUpperCase() + city.slice(1).toLowerCase() });
-
     if (!cityOverview) {
       return res.status(404).json({ message: "La ciudad solicitada no se encontró en la base de datos" });
     }
@@ -120,7 +119,8 @@ router.get("/:id", async (req, res) => {
 // @desc    Delete cityOverview from database
 // @route   DELETE /api/v1/city-overview/:id
 // @access  Private/isAdmin
-router.delete("/delete/:id",isAuthenticated, isAdmin, async (req, res) => {
+router.delete("/delete/:id", isAuthenticated,
+isAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     const deletedCityOverview = await CityOverview.findByIdAndDelete( id );

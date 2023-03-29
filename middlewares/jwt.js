@@ -20,8 +20,6 @@ const isAuthenticated = jwt({
 
 const isAdmin = (req, res, next) => {
   next(); 
-  // check out what is going on with the middlewares
-  console.log(req.payload);
   if (req.payload.role === 'admin') {
     next()
   } else {
@@ -30,18 +28,8 @@ const isAdmin = (req, res, next) => {
   }
 }
 
-const isloggedIn = (req, res, next) => {
-  if (req.payload && req.payload.sub) {
-    next()
-  } else {
-    res.redirect("/auth/signup");
-    return;
-  }
-}
-
-
 module.exports = {
-  isAuthenticated,isloggedIn,
+  isAuthenticated,
   isAdmin
 }
 
