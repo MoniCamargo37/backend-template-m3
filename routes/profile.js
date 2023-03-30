@@ -1,9 +1,22 @@
-const router = express.Router();
+const router = require('express').Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
+const multer = require("multer");
 const { isAuthenticated, isAdmin } = require('../middlewares/jwt');
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'public/images/profile');
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + '-' + file.originalname);
+    }
+  })
+}).single('photo');
+
 
 // @desc    is responsible for getting the user's profile page.
 // @route   GET /profile
@@ -50,7 +63,7 @@ router.put("/cambiar-contrasena", isAuthenticated, async (req, res, next) => {
     return;
   }
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
-  if (!passwordRegex.test(password)) {
+  if (!passwordRegex.test(newPassword)) {
     res
       .status(400)
       .json({
@@ -79,46 +92,59 @@ router.put("/cambiar-contrasena", isAuthenticated, async (req, res, next) => {
 // @desc    This route allows the user to edit their profile picture.
 // @route   PUT /profile/editPhoto
 // @access  Private
-router.put(
-  "/editPhoto",
-  isAuthenticated,
-  async (req, res, next) => {
-    try {
-      const user = await User.findById(req.payload.userId);
+router.put('/editPhoto', isAuthenticated, async (req, res, next) => {
+  try {
+    const { _id } = req.payload;
+    const user = await User.findById(_id);
 
-      if (!req.file) {
-        return res.status(400).json({ message: "Please upload a file" });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    upload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ message: err.message });
       }
 
-      user.avatar = {
-        data: req.file.buffer,
-        contentType: req.file.mimetype,
-      };
-      await user.save();
-
-      res.status(200).json({ message: "Avatar updated" });
-    } catch (error) {
-      next(error);
-    }
+      if (req.file) {
+        user.imageUrl = req.file.filename;
+        const updatedUser = await user.save();
+        return res.status(200).json({ message: 'Image updated', user: updatedUser });
+      } else {
+        return res.status(400).json({ message: 'No file was uploaded' });
+      }
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
+
+
+
 
 // @desc    This route allows the user to delete their profile picture.
-// @route   DELETE /user/profile/deletePhoto
+// @route   DELETE /profile/deletePhoto
 // @access  Private
-router.delete(
-  "/deletePhoto",
-  isAuthenticated,
-  async (req, res, next) => {
-    try {
-      const user = await User.findById(req.payload.userId);
-      user.avatar = undefined;
-      await user.save();
-      res.status(200).json({ message: "Avatar deleted" });
-    } catch (error) {
-      next(error);
+router.delete("/profile/deletePhoto", isAuthenticated, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.payload.userId);
+
+    // Verificar si la imagen personalizada está presente
+    if (user.imageUrl !== "https://media.vogue.mx/photos/62e19b3d4a4bcdd2c09a7c1b/2:3/w_1920,c_limit/GettyImages-1155131913-2.jpg") {
+      // Si la imagen personalizada está presente, eliminarla
+      user.imageUrl = undefined;
+    } else {
+      // Si la imagen personalizada no está presente, eliminar la imagen por defecto
+      user.imageUrl = "https://media.vogue.mx/photos/62e19b3d4a4bcdd2c09a7c1b/2:3/w_1920,c_limit/GettyImages-1155131913-2.jpg";
     }
+
+    await user.save();
+
+    res.status(200).json({ message: "Image URL deleted" });
+  } catch (error) {
+    next(error);
   }
-);
+});
+
 
 module.exports = router;
