@@ -1,11 +1,9 @@
-const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
-const { isAuthenticated,
-  isAdmin } = require("../middlewares/jwt");
+const { isAuthenticated, isAdmin } = require('../middlewares/jwt');
 
 // @desc    is responsible for getting the user's profile page.
 // @route   GET /profile
@@ -22,10 +20,10 @@ router.get("/", isAuthenticated, async (req, res, next)=> {
 
 
 // @desc    This route allows a user to change their password.
-// @route   PUT /profile/edit
+// @route   PUT /profile/cambiar-contrasena
 // @access  Private
 
-router.put("/cambiar-contraseña", isAuthenticated, async (req, res, next) => {
+router.put("/cambiar-contrasena", isAuthenticated, async (req, res, next) => {
   const { _id: userId } = req.payload;
   const { currentPassword, newPassword, newPasswordConfirmation } = req.body;
   if (!currentPassword || !newPassword || !newPasswordConfirmation) {

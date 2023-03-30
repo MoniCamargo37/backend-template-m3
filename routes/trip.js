@@ -5,7 +5,7 @@ const { isAuthenticated, isAdmin } = require('../middlewares/jwt');
 // @desc    Get all trip plan
 // @route   GET /trip plan
 // @access  Private
-router.get('/', async (req, res, next) => {
+router.get('/', isAuthenticated, async (req, res, next) => {
     try {
       const trips = await Trip.find();
       res.status(200).json(trips);
@@ -31,18 +31,21 @@ router.get('/:tripId',isAuthenticated, async (req, res, next) => {
 // @desc    Create one trip plan
 // @route   POST /courses
 // @access  Public
-router.post('/', async (req, res, next) => {
+router.post('/', isAuthenticated, async (req, res, next) => {
   try {
-    const newTrip = await Trip.create(req.body);
+    const { _id: userId } = req.payload;
+    const newTrip = await Trip.create({...req.body, user: userId});
     res.status(201).json(newTrip);
   } catch (error) {
     next(error)
   }
 });
 
+
 // @desc    Edit one trip
 // @route   PUT /trip/:tripId
 // @access  Public
+
 router.put('/:tripId',isAuthenticated, async (req, res, next) => {
   const { tripId } = req.params;
   try {

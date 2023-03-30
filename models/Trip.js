@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema, model } = mongoose;
+const { Schema } = mongoose;
 
 const tripSchema = new Schema({
   city: {
@@ -20,17 +20,10 @@ const tripSchema = new Schema({
     type: String,
     required: true
   },
-  startDate: {
-    type: Date,
-    // required: true
-  },
-  endDate: {
-    type: Date,
-    // required: true
-  },
+
   tripType: {
     type: String,
-    enum: ['amigos', 'niños', 'pareja', 'mayores']
+    enum: ['con amigos', 'con niños', 'en pareja', 'para mayores']
   },
   budget: {
     type: Number,
@@ -48,10 +41,15 @@ const tripSchema = new Schema({
       ref: 'CityOverview'
     }
   ],
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
   weather: {
     type: String,
     // required: true
   }
 });
 
-module.exports = model('Trip', tripSchema);
+module.exports = mongoose.model('Trip', tripSchema);
+
