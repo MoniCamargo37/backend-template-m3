@@ -10,20 +10,16 @@ const cityOverviewSchema = new Schema({
     type: String,
     // required: true
   },
-  description: {
+  country: {
     type: String,
     // required: true
   },
-  currency: {
+  description: {
     type: String,
     // required: true
   },
   numSearches: {
     type: Number,
-    // required: true
-  },
-  location: {
-    type: String,
     // required: true
   },
   destinationPics: {

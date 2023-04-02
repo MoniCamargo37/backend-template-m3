@@ -1,0 +1,31 @@
+const express = require('express');
+const router = express.Router();
+const Activity = require('../models/Activity');
+
+//pienso que no lo voy a usar pero lo dejo por ahora 
+router.get("/", async (req, res) => {
+  try {
+      const Activity = await Activity.find();
+      res.json(Activity);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Error en el servidor");
+    }
+  });
+
+// Route to create a new DayTrip
+ router.post('/', async (req, res) => {
+  const { activity1, activity2, activity3 } = req.body;
+  const dayTrip = new DayTrip({ activity1, activity2, activity3 });
+
+  try {
+    await dayTrip.save();
+    res.status(201).json(dayTrip);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+
+
+module.exports = router;

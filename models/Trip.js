@@ -27,12 +27,18 @@ const tripSchema = new Schema({
   },
   budget: {
     type: Number,
-    required: true
+    required: true,
+    validate: {
+      validator: function(value) {
+        return value >= 200 && value <= 10000;
+      },
+      message: 'El presupuesto debe estar entre 200 y 10000 euros.'
+    }
   },
-  dayTrip: [
+  days: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'DayTrip'
+      ref: 'Day'
     }
   ],
   cityOverview: [

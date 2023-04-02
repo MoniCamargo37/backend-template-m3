@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const CityOverview = require("../models/CityOverview");
-const { isAuthenticated,
-  isAdmin } = require("../middlewares/jwt");
+const openAIConnection = require("../utils/openAIConnection");
+const { isAuthenticated, isAdmin } = require("../middlewares/jwt");
+const sendQuery = require('../utils/bingImageSearch');
 
 // @desc    get all cityOverviews 
 // @route   GET /api/v1/city-overview"
@@ -22,7 +23,7 @@ router.get("/", async (req, res) => {
 // @access  Public
 router.get("/mostSearched", async (req, res) => {
   try {
-    const cityOverviews = await CityOverview.find().sort({ numSearches: -1 }).limit(4);
+    const cityOverviews = await CityOverview.find().sort({ numSearches: -1 }).limit(10);
     res.json(cityOverviews);
   } catch (err) {
     console.error(err.message);
@@ -39,7 +40,33 @@ router.get("/:city", async (req, res) => {
     const { city } = req.params;
     let cityOverview = await CityOverview.findOne({ cityName: city.charAt(0).toUpperCase() + city.slice(1).toLowerCase() });
     if (!cityOverview) {
-      return res.status(404).json({ message: "La ciudad solicitada no se encontró en la base de datos" });
+      let myCity = new CityOverview;
+      myCity.cityName = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
+      myCity.numSearches = 1;
+      const AIresponse = await openAIConnection(
+        "Escribe una larga descripción seria y precisa de un párrafo sobre la ciudad de " + city + " y otro sobre los alrededores con un eslogan final que atraiga visitantes. Devuelve el texto, el nombre de la ciudad y el país, sin repetir la ciudad, con dichos campos separados por una | con el siguiente formato ciudad|pais|descripcion. No hay que poner espacios entre la información y la |", 0, 1);
+      const arrayResponse = AIresponse.choices[0].text.split('|');
+      console.log(arrayResponse);
+      const foundCity = arrayResponse[0].replace(/\r?\n|\r/g, '');
+      if(foundCity === 'null'){
+        return res.status(500).send(null);
+      }
+      myCity.description = arrayResponse[2].replace(/\r?\n|\r/g, '');
+      myCity.country = arrayResponse[1].replace(/\r?\n|\r/g, '');
+      myCity.cityName = arrayResponse[0].replace(/\r?\n|\r/g, '');
+      //Now we need to find the images
+      let image1 = await sendQuery(`Panorámica de la ciudad ${city}, ${myCity.country}`);
+      let image2 = await sendQuery(`Parque de la ciudad ${city}, ${myCity.country}`);
+      let image3 = await sendQuery(`Monumento de la ciudad ${city}, ${myCity.country}`);
+      console.log("Esto es lo que recibimos: ", image1);
+      console.log("Esto es lo que recibimos: ", image2);
+      console.log("Esto es lo que recibimos: ", image3);
+      myCity.destinationPics = [image1, image2];
+      myCity.itineraryPic = image3;
+
+      await myCity.save();
+      // console.log(myCity);
+     return res.status(200).send(myCity);
     }
 
     cityOverview.numSearches++;
@@ -83,38 +110,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
-// @desc    Adding favorite city to user account
-// @route   POST /api/v1/city-overview/:cityOverviewId
-// @access  Private/user
-// router.post("/:cityOverviewId", async (req, res) => {
-//   try {
-//     const { cityOverviewId } = req.params;
-//     const userId = req.user.id;
-//     const user = await User.findById(userId);
-//     const cityOverview = await CityOverview.findById(cityOverviewId);
-
-//     if (!user) {
-//       return res.status(404).json({ msg: "Lo sentimos, debe registrarse para añadirlo a tus favoritos" });
-//     }
-
-//     if (!cityOverview) {
-//       return res.status(404).json({ msg: "No se ha encontrado este destino" });
-//     }
-
-//     if (user.cityOverviews.includes(cityOverviewId)) {
-//       return res.status(400).json({ msg: "Ya existe este destino en tu cuenta" });
-//     }
-
-//     user.cityOverviews.push(cityOverviewId);
-//     await user.save();
-
-//     res.json({ msg: "Añadido a tus favoritos" });
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Error en el servidor");
-//   }
-// });
 
 // @desc    Delete cityOverview from database
 // @route   DELETE /api/v1/city-overview/:id

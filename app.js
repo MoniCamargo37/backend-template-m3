@@ -10,7 +10,7 @@ const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const tripRouter = require('./routes/trip');
 const cityOverviewRouter = require('./routes/city-overview');
-const dayTripRouter = require('./routes/dayTrip');
+const activitiesRouter = require('./routes/activities');
 const profileRouter = require('./routes/profile');
 
 const app = express();
@@ -30,7 +30,7 @@ app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/trip', tripRouter);
 app.use('/city-overview', cityOverviewRouter);
-app.use('/dayTrip', dayTripRouter);
+app.use('/activies', activitiesRouter);
 app.use('/profile', profileRouter);
 
 // catch 404 and forward to error handler
