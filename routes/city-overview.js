@@ -37,15 +37,17 @@ router.get("/mostSearched", async (req, res) => {
 // @access  Public
 router.get("/:city", async (req, res) => {
   try {
-    const { city } = req.params;
-    let cityOverview = await CityOverview.findOne({ cityName: city.charAt(0).toUpperCase() + city.slice(1).toLowerCase() });
+    let { city } = req.params;
+    city = city.split(',')[0];
+    const regex = new RegExp(city, 'i');
+    let cityOverview = await CityOverview.findOne({ cityName: regex });
     if (!cityOverview) {
       let myCity = new CityOverview;
       myCity.cityName = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
       myCity.numSearches = 1;
       const AIresponse = await openAIConnection(
-        "Escribe una larga descripción seria y precisa de un párrafo sobre la ciudad de " + city + " y otro sobre los alrededores con un eslogan final que atraiga visitantes. Devuelve el texto, el nombre de la ciudad y el país, sin repetir la ciudad, con dichos campos separados por una | con el siguiente formato ciudad|pais|descripcion. No hay que poner espacios entre la información y la |", 0, 1);
-      const arrayResponse = AIresponse.choices[0].text.split('|');
+        "Escribe una larga descripción seria y precisa de dos párrafos sobre la ciudad " + city + " y sus alrededores con un eslogan final que atraiga visitantes. Devuelve el texto, el nombre de la ciudad y el país, sin repetir la ciudad, con dichos campos separados por una | con el siguiente formato ciudad|pais|descripcion. No hay que poner espacios entre la información y la |", 1, 1);
+      const arrayResponse = AIresponse.choices.split('|');
       console.log(arrayResponse);
       const foundCity = arrayResponse[0].replace(/\r?\n|\r/g, '');
       if(foundCity === 'null'){

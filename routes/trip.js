@@ -53,7 +53,8 @@ router.post('/actividades',  async (req, res) => {
     
     Petición del cliente:
     Quiero un plan para ${tripDuration} días en la ciudad de ${city} que sean apropiadas para un viaje de estilo ${tripType} durante el mes número ${monthOfTrip} para ${numTravellers} viajeros.`,0,1);
-    const AIresponseArray = AIresponse.choices[0].text.replace(/\r?\n|\r/g, '').split('|');
+    console.log("La respuesta de la máquina: ", AIresponse);
+    const AIresponseArray = AIresponse.choices.replace(/\r?\n|\r/g, '').split('|');
 
     let index = 1;
     let name = '';
