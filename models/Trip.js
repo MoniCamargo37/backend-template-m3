@@ -14,7 +14,8 @@ const tripSchema = new Schema({
   },
   numTravellers: {
     type: Number,
-    required: true
+    required: true,
+    min: 1,
   },
   monthOfTrip: {
     type: String,
@@ -23,14 +24,14 @@ const tripSchema = new Schema({
 
   tripType: {
     type: String,
-    enum: ['con amigos', 'con niños', 'en pareja', 'para mayores']
+    enum: ['aventurero', 'relajado', 'romantico', 'familiar']
   },
   budget: {
     type: Number,
     required: true,
     validate: {
       validator: function(value) {
-        return value >= 200 && value <= 10000;
+        return value >= 100 && value <= 10000;
       },
       message: 'El presupuesto debe estar entre 200 y 10000 euros.'
     }
@@ -39,12 +40,6 @@ const tripSchema = new Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Day'
-    }
-  ],
-  cityOverview: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'CityOverview'
     }
   ],
   user: {
