@@ -10,15 +10,28 @@ const req = require('express/lib/request');
 // @desc    Get all trip plan
 // @route   GET /api/v1/trip plan
 // @access  Private/ user 
+// router.get('/', isAuthenticated, async (req, res, next) => {
+//   const { _id: userId } = req.payload;
+//   try {
+//     const trips = await Trip.find({ user: userId });
+//     res.status(200).json(trips);
+//   } catch (error) {
+//     next(error)
+//   }
+// });
+
 router.get('/', isAuthenticated, async (req, res, next) => {
+  console.log('Se recibió una solicitud GET');
   const { _id: userId } = req.payload;
   try {
     const trips = await Trip.find({ user: userId });
     res.status(200).json(trips);
   } catch (error) {
-    next(error)
+    console.log('Error al procesar la solicitud GET');
+    next(error);
   }
 });
+
 
   
 // @desc    Get a specific trip plan
@@ -88,7 +101,7 @@ número ${monthOfTrip} para ${numTravellers} viajeros.`,0,1);
         indexPhrase = 0;
         if (day && day.activities.length > 0) {
           days.push(day);
-          day.save();
+          // day.save();
         }
         day = new Day({name: 'day ' + index, activities: []});
         index++;
@@ -111,7 +124,7 @@ duration: '' });
         case 3:
           newActivity.duration = phrase;
           day.activities.push(newActivity);
-          newActivity.save();
+          // newActivity.save();
           newActivity = null;
           indexPhrase = 1;
           break;
@@ -122,7 +135,7 @@ duration: '' });
 
     if (day && day.activities.length > 0) {
       days.push(day);
-      day.save();
+      // day.save();
     }
 
 // return res.status(200).send(Day);
@@ -136,57 +149,32 @@ duration: '' });
 
 // @desc    Create one trip plan
 // @route   POST /api/v1/trip
-// @access   Private/ user MONICA
-// router.post('/', isAuthenticated, async (req, res, next) => {
-//   try {
-//     const { _id: userId } = req.payload;
-//     const { tripPlan, cityName, days } = req.body;
-
-//     console.log("Vamos a por el trip: ", tripPlan);
-//     console.log("Vamos a por el trip: ", cityName);
-//     console.log("Vamos a por el trip: ", days);
-//     // Create Trip object with required fields and references to CityOverview and DayTrip
-//     const newTrip = await Trip.create({
-//       city,
-//       tripDuration,
-//       numTravellers,
-//       monthOfTrip,
-//       tripType,
-//       budget,
-//       dayTrip,
-//       cityOverview,
-//       user: _id,
-//       weather
-//     });
-
-//     res.status(201).json(newTrip);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-router.post('/', async (req, res, next) => {
-//    const { _id: userId } = req.payload;
-    const { tripPlan, days } = req.body;
+// @access   Private/ user 
+router.post('/', isAuthenticated, async (req, res, next) => {
+  const { _id: userId } = req.payload;
+  const { tripPlan, days } = req.body;
+  console.log("Los days: ", days);
   try {
-    // Create Trip object with required fields and references to CityOverview and DayTrip
-    const newTrip =  {
+    // Crear objeto de viaje con los campos requeridos y las referencias a CityOverview y DayTrip
+    const newTrip = {
       city: tripPlan.city,
       tripDuration: tripPlan.tripDuration,
       numTravellers: tripPlan.numTravellers,
       monthOfTrip: tripPlan.monthOfTrip,
       tripType: tripPlan.tripType,
       budget: tripPlan.budget,
-      days: days
+      days: days,
     };
-    console.log("El trip: ", newTrip);
-    await Trip.create(newTrip);
-    res.status(201).json(newTrip);
+    const trip = await Trip.create({ user: userId, ...newTrip });
+    res.status(201).json(trip);
   } catch (error) {
     console.log('Error');
     next(error);
   }
 });
+
+
+
 
 // @desc    Edit one trip
 // @route   PUT /api/v1/trip/:tripId

@@ -45,10 +45,6 @@ const tripSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-  },
-  weather: {
-    type: String,
-    // required: true
   }
 });
 
