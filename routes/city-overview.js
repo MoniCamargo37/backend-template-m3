@@ -37,39 +37,28 @@ router.get("/mostSearched", async (req, res) => {
 // @access  Public
 router.get("/:city", async (req, res) => {
   try {
-    let { city } = req.params;
-    city = city.split(',')[0];
-    const regex = new RegExp(city, 'i');
-    let cityOverview = await CityOverview.findOne({ cityName: regex });
-    if (!cityOverview) {
-      let myCity = new CityOverview;
-      myCity.cityName = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
-      myCity.numSearches = 1;
-      const AIresponse = await openAIConnection(
-        "Escribe una larga descripción seria y precisa de dos párrafos sobre la ciudad " + city + " y sus alrededores con un eslogan final que atraiga visitantes. Devuelve el texto, el nombre de la ciudad y el país, sin repetir la ciudad, con dichos campos separados por una | con el siguiente formato ciudad|pais|descripcion. No hay que poner espacios entre la información y la |", 1, 1);
-      const arrayResponse = AIresponse.choices.split('|');
-      console.log(arrayResponse);
-      const foundCity = arrayResponse[0].replace(/\r?\n|\r/g, '');
-      if(foundCity === 'null'){
-        return res.status(500).send(null);
-      }
-      myCity.description = arrayResponse[2].replace(/\r?\n|\r/g, '');
-      myCity.country = arrayResponse[1].replace(/\r?\n|\r/g, '');
-      myCity.cityName = arrayResponse[0].replace(/\r?\n|\r/g, '');
-      //Now we need to find the images
-      let image1 = await sendQuery(`Panorámica de la ciudad ${city}, ${myCity.country}`);
-      let image2 = await sendQuery(`Parque de la ciudad ${city}, ${myCity.country}`);
-      let image3 = await sendQuery(`Monumento de la ciudad ${city}, ${myCity.country}`);
-      console.log("Esto es lo que recibimos: ", image1);
-      console.log("Esto es lo que recibimos: ", image2);
-      console.log("Esto es lo que recibimos: ", image3);
-      myCity.destinationPics = [image1, image2];
-      myCity.itineraryPic = image3;
-
-      await myCity.save();
-      // console.log(myCity);
-     return res.status(200).send(myCity);
-    }
+        let { city } = req.params;
+    
+        let cityOverview = await CityOverview.findOne({ cityName: city });
+    
+        if (!cityOverview) {
+          let myCity = new CityOverview;
+          myCity.cityName = city;
+          myCity.country = city.split('(')[1].split(')')[0];
+          myCity.numSearches = 1;
+          openAIResponse = await openAIConnection(
+            "Escribe una larga descripción seria y precisa de dos párrafos sobre la ciudad de " + city + " y sus alrededores con un eslogan final que atraiga visitantes.", 1, 1);
+          myCity.description = openAIResponse.choices;
+    
+          //Now we need to find the images for this city
+          let image1 = await sendQuery(`Panorámica impresionante de la ciudad de ${city}`);
+          let image2 = await sendQuery(`Parque de la ciudad de ${city}`);
+          let image3 = await sendQuery(`Monumento representativo de la ciudad de ${city}`);
+          myCity.destinationPics = [image1, image2];
+          myCity.itineraryPic = image3;
+          await myCity.save();
+          return res.status(200).send(myCity);
+        }    
 
     cityOverview.numSearches++;
     

@@ -12,25 +12,25 @@ router.post('/signup', async (req, res, next) => {
   const { email, password, username } = req.body;
   // Check if email or password or name are provided as empty string 
   if (email === "" || password === "" || username === "") {
-    res.status(400).json({ message: 'Please fill all the fields to register' });
+    res.status(400).json({ message: 'Rellene todos los campos para registrarse' });
     return;
   }
   // Use regex to validate the email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   if (!emailRegex.test(email)) {
-    res.status(400).json({ message: 'Not a valid email format' });
+    res.status(400).json({ message: 'Formato de correo electrónico no es válido' });
     return;
   }
    // Use regex to validate the password format
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
   if (!passwordRegex.test(password)) {
-    res.status(400).json({ message: 'Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter' });
+    res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres y contener como mínimo un número, una minúscula y una mayúscula.' });
     return;
   }
   try {
     const userInDB = await User.findOne({ email });
     if (userInDB) {
-      res.status(400).json({ message: `User already exists with email ${email}` })
+      res.status(400).json({ message: `Ya existe un usuario con este correo electrónico ${email}` })
       return;
     } else {
       const salt = bcrypt.genSaltSync(saltRounds);
@@ -51,7 +51,7 @@ router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
   // Check if email or password are provided as empty string 
   if (email === "" || password === "") {
-    res.status(400).json({ message: 'Please fill all the fields to login' });
+    res.status(400).json({ message: 'Rellene todos los campos para iniciar sesión' });
     return;
   }
   try {
@@ -59,7 +59,7 @@ router.post('/login', async (req, res, next) => {
     const userInDB = await User.findOne({ email });
     // If they don't exist, return an error
     if (!userInDB) {
-      res.status(404).json({ success: false, message: `No user registered by email ${email}` })
+      res.status(404).json({ success: false, message: `Ningún usuario registrado con este correo electrónico ${email}` })
       return;
     } else {
       const passwordMatches = bcrypt.compareSync(password, userInDB.hashedPassword);
@@ -80,7 +80,7 @@ router.post('/login', async (req, res, next) => {
         res.status(200).json({ authToken: authToken })
       } else {
         // If the password is not right, return an error
-        res.status(401).json({ success: false, message: 'Unable to authenticate user'})
+        res.status(401).json({ success: false, message: 'No se puede autenticar el usuario'})
       }
     }
   } catch (error) {

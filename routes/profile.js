@@ -92,7 +92,7 @@ router.put("/cambiar-contrasena", isAuthenticated, async (req, res, next) => {
 // @desc    This route allows the user to edit their profile picture.
 // @route   PUT /profile/editPhoto
 // @access  Private
-router.put('/editPhoto', isAuthenticated, async (req, res, next) => {
+router.put('/editar-foto', isAuthenticated, async (req, res, next) => {
   try {
     const { _id } = req.payload;
     const user = await User.findById(_id);
@@ -125,7 +125,7 @@ router.put('/editPhoto', isAuthenticated, async (req, res, next) => {
 // @desc    This route allows the user to delete their profile picture.
 // @route   DELETE /profile/deletePhoto
 // @access  Private
-router.delete("/profile/deletePhoto", isAuthenticated, async (req, res, next) => {
+router.delete("/profile/borrar-foto", isAuthenticated, async (req, res, next) => {
   try {
     const user = await User.findById(req.payload.userId);
 
