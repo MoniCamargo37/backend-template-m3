@@ -1,11 +1,8 @@
 const router = require('express').Router();
-const Trip = require('../models/Trip');
-const CityOverview = require('../models/CityOverview');
 const openAIConnection = require("../utils/openAIConnection");
-const Activity = require('../models/Activity');
+const Trip = require('../models/Trip');
 const Day = require('../models/Day');
-const { isAuthenticated, isAdmin } = require('../middlewares/jwt');
-const req = require('express/lib/request');
+const { isAuthenticated } = require('../middlewares/jwt');
 
 // @desc    Get all trip plan
 // @route   GET /api/v1/trip plan
@@ -41,7 +38,7 @@ router.get('/:tripId',isAuthenticated, async (req, res, next) => {
   const { tripId } = req.params;
   const { _id: userId } = req.payload;
   try {
-    const trip = await Trip.findById({_id: tripId, user: userId});
+    const trip = await Trip.findById({_id: tripId, user: userId}).populate('days');
     res.status(200).json(trip);
   } catch (error) {
     next(error)
@@ -93,7 +90,7 @@ número ${monthOfTrip} para ${numTravellers} viajeros.`,0,1);
 
     let indexPhrase = 0;
     let day = new Day;
-    let newActivity = new Activity;
+    let newActivity = {name: 'Día ' + index, city: city, activities: []};
     let days = [];
 
     AIresponseArray.forEach(phrase => {
@@ -112,8 +109,7 @@ número ${monthOfTrip} para ${numTravellers} viajeros.`,0,1);
           indexPhrase = 1;
           break;
         case 1:
-          newActivity = new Activity({ name: '', description: '',
-duration: '' });
+          newActivity = { name: '', description: '', duration: '' };
           newActivity.name = phrase;
           indexPhrase = 2;
           break;
@@ -155,6 +151,13 @@ router.post('/', isAuthenticated, async (req, res, next) => {
   const { tripPlan, days } = req.body;
   console.log("Los days: ", days);
   try {
+    const newDaysPromises = days.map(async (day) => {
+      const newDay = await Day.create(day);
+      console.log('El new day:', day._id);
+      return newDay._id;
+    });
+    const newDays = await Promise.all(newDaysPromises);
+    console.log('Los new Days: ', newDays);
     // Crear objeto de viaje con los campos requeridos y las referencias a CityOverview y DayTrip
     const newTrip = {
       city: tripPlan.city,
@@ -163,16 +166,15 @@ router.post('/', isAuthenticated, async (req, res, next) => {
       monthOfTrip: tripPlan.monthOfTrip,
       tripType: tripPlan.tripType,
       budget: tripPlan.budget,
-      days: days,
+      days: newDays,
     };
+    console.log("El new trip: ", newTrip);
     const trip = await Trip.create({ user: userId, ...newTrip });
     res.status(201).json(trip);
   } catch (error) {
     console.log('Error');
     next(error);
-  }
-});
-
+  }});
 
 
 

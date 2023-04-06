@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Activity = require('./Activity');
 const { Schema, model } = mongoose;
 
 const daySchema = new Schema([
@@ -8,11 +7,11 @@ const daySchema = new Schema([
       type: String
     },
     activities: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Activity',
-        required: true
-    }],
-  },
+      name: String,
+      description: String,
+      duration: String
+    }]
+  }
 ]);
 
 module.exports = model("Day", daySchema);

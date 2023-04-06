@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Activity = require('../models/Activity');
 
 //pienso que no lo voy a usar pero lo dejo por ahora 
 router.get("/", async (req, res) => {
