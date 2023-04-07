@@ -3,9 +3,8 @@ const { Schema, model } = mongoose;
 
 const daySchema = new Schema([
   {
-    name: {
-      type: String
-    },
+    name: String,
+    picture: String,
     activities: [{
       name: String,
       description: String,
