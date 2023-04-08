@@ -30,6 +30,7 @@ const sendQuery = async (textToSearch) => {
             });
             response.on('end', function() {
                 let search_results = JSON.parse(body);
+                console.log('Lo buscado: ', search_results);
                 let first_image_url = search_results.value[0].contentUrl;
                 resolve(first_image_url);
             });
@@ -40,6 +41,9 @@ const sendQuery = async (textToSearch) => {
         req.end();
     });
 };
+
+
+
 
 module.exports = sendQuery;
 

@@ -73,7 +73,6 @@ router.put("/editar-contrasena", isAuthenticated, async (req, res, next) => {
       }
     );
     res.status(204).json({ message: "La contraseña se ha actualizado correctamente." });
-    res.redirect("/profile");
   } catch (error) {
     console.error(error);
   }
@@ -82,7 +81,7 @@ router.put("/editar-contrasena", isAuthenticated, async (req, res, next) => {
 // @desc    This route allows the user to edit their profile picture.
 // @route   PUT /profile/editPhoto
 // @access  Private
-router.put('/profile/editPhoto', isAuthenticated, fileUploader.single('image'), async (req, res, next) => {
+router.put('/editar-foto', isAuthenticated, fileUploader.single('imageUrl'), async (req, res, next) => {
   try {
   const { _id: userId } = req.payload;
   const updatedUser = await User.findByIdAndUpdate(
@@ -100,6 +99,18 @@ router.put('/profile/editPhoto', isAuthenticated, fileUploader.single('image'), 
   next(error);
   }
   });
+
+// router.put("/editar-foto", isAuthenticated, async (req, res, next) => {
+//   const { _id: userId } = req.payload;
+//   const { imageUrl } = req.body;
+//   try {
+//     const user = await User.findByIdAndUpdate(userId, { imageUrl }, { new: true });
+//     res.status(200).json({ message: "Imagen de perfil actualizada exitosamente.", user });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
 
 // @desc    This route allows the user to delete their profile picture.
 // @route   DELETE /profile/deletePhoto

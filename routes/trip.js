@@ -53,63 +53,71 @@ router.post("/actividades", async (req, res) => {
     const { city, tripDuration, numTravellers, monthOfTrip, tripType, budget } =
       req.body;
     const AIresponse = await openAIConnection(
-      `Eres un agente de
-viajes experto en el tema que recomiendas visitas a tus clientes. Para
-las recomendaciones sigues las siguientes reglas:
-    - Haces un plan para cada uno de los días que te piden indicando
-la duración de cada actividad.
-    - Las actividades del mismo día deben estar a menos de 10
-kilómetros de distancia.
-    - Si el viaje es de 3 días o más , mínimo 1 día debe ser fuera de
-la ciudad. Si no hay actividades que hacer en la ciudad, propón todas
-las actividades en la provincia.
-    - Para las actividades ten en cuenta la época del año del viaje,
-la temperatura... por ejemplo no propongas actividades de agua en
-invierno.
-    - La suma de todas las actividades propuestas de un día deben
-estar MÍNIMO 7 horas y MÁXIMO 9 horas sumando desplazamientos de una
-actividad a otra.
-    - No indiques las horas de las actividades, limítate a mostrar las
-actividades sin más, una frase emocionante sobre cada una y la
-duración de lo que se puede tardar en la actividad.
-    - No uses desayuno, comida, cena, tapas ni similares como actividad.
-    - El formato de devolución del plan debe ser exactamente: día:
-1|actividad: |frase: |duración: |actividad: |frase: |duración: |fin del día|día:
-2|actividad: |frase: |duración: | (no cambies el orden ni el formato)
+      `Comprender y aplicar perfectamente las reglas para planificar un itinerario de viaje no tiene por qué ser una tarea tediosa. Quienes son capaces de diseñar planes de viaje emocionantes, seguros y funcionales pueden ser muy valorados por los viajeros de todo el mundo. Dicho esto, te desafío a que, con la ayuda del modelo de IA GPT 3.5, crees un programa capaz de planear itinerarios de viaje adaptados a las necesidades de tus clientes, cumpliendo todas las siguientes especificaciones:
+      - El programa debe sugerir actividades para cada día del viaje, especificando la duración de cada una.
+      - Las actividades propuestas para un mismo día deben estar a una distancia máxima de 10 kilómetros entre ellas.
+      - Si el viaje tiene una duración de tres días o más, el programa deberá sugerir al menos una actividad fuera de la ciudad.
+      - Si no hay actividades disponibles en la ciudad, el programa debe incluir actividades fuera de la ciudad a una distancia máxima de 100 kilómetros.
+      - Las actividades sugeridas deben ser apropiadas para la época del mes en la que se realizará el viaje; no se deben proponer actividades de agua o esquí fuera de temporada.
+      - El tiempo total de las actividades de cada día debe tener un mínimo de 6 horas y un máximo de 8 horas o serás despedido.
+      - El formato de devolución de las sugerencias deberá ser exactamente el siguiente (no cambies el orden ni el formato):
+        día 1:
+        actividad:
+        Latitud:
+        Longitud:
+        frase:
+        duración:
+        actividad: 
+        Latitud:
+        Longitud:
+        frase: 
+        duración: 
+        fin del día
+        día 2: 
+        actividad:
+        Latitud:
+        Longitud:
+        frase:
+        duración:
+        ...
+      
+        Por último, asegúrate de que el programa no incluya recomendaciones de cenas (o estarás despedido para siempre) y de que se adapte a las necesidades del cliente, quien especificará el número de personas que viajan, el estilo de viaje y la duración del viaje.
+        Con estos requisitos en cuenta, crea un planificador de viajes inteligente y efectivo que tus clientes agradecerán. ¡Manos a la obra!
 
     Petición del cliente:
-    Quiero un plan para ${tripDuration} días en la ciudad de ${city}
-que sean apropiadas para un viaje de estilo ${tripType} durante el mes
-número ${monthOfTrip} para ${numTravellers} viajeros.`,
-      0,
-      1
-    );
+    Quiero un plan sin cenas románticas porque tengo pensión completa en el hotel para ${tripDuration} días en la ciudad de ${city} que sean apropiadas para un viaje ${tripType} para ${numTravellers} viajeros de estilo durante la época del mes número ${monthOfTrip} del calendario.`, 0, 1);
     const AIresponseArray = AIresponse.choices.split(/\||\n/);
 
-    //    console.log(AIresponseArray);
+    console.log("La respuesta de openAI", AIresponseArray);
 
     let index = 1;
     let days = [];
 
     const extractingData = async () => {
       let day = new Day();
-      let newActivity = { name: "", description: "", duration: "" };
+      let newActivity = { name: "", description: "", duration: "", latitude: 0, longitude: 0 };
 
       for (const phrase of AIresponseArray) {
         if (phrase.includes("Actividad: ")) {
           newActivity.name = phrase.replace("Actividad: ", "");
         } else if (phrase.includes("Frase: ")) {
           newActivity.description = phrase.replace("Frase: ", "");
+        } else if (phrase.includes("Latitud: ")) {
+          newActivity.latitude = phrase.replace("Latitud: ", "");
+        } else if (phrase.includes("Longitud: ")) {
+          newActivity.longitude = phrase.replace("Longitud: ", "");
         } else if (phrase.includes("Duración: ")) {
           newActivity.duration = phrase.replace("Duración: ", "");
           day.activities.push(newActivity);
           newActivity = { name: "", description: "", duration: "" };
         } else if (phrase.includes("Fin del día")) {
           day.picture = await sendQuery(
-            `Foto de ${day.activities[0].name} de la ciudad de ${city}`
+            `Foto de ${day.activities[0].name} en la ciudad de ${city}`
           );
           day.name = "Día " + index;
           days.push(day);
+          console.log('El día ', index, ' ha sido creado');
+          console.log(day);
           day = new Day();
           index++;
         }
