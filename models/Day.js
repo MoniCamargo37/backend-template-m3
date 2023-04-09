@@ -11,6 +11,7 @@ const daySchema = new Schema([
       duration: String
     }]
   }
+  
 ]);
 
 module.exports = model("Day", daySchema);

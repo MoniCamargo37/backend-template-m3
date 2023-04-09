@@ -26,6 +26,10 @@ const cityOverviewSchema = new Schema({
     type: [String],
     // required: true
   }
+},
+{
+  timestamps: true
+  
 });
 
 module.exports = model('CityOverview', cityOverviewSchema);

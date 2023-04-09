@@ -1,4 +1,5 @@
 const https = require("https");
+const { createCanvas, loadImage } = require('canvas');
 
 let subscriptionKey = 'b714d22be1d240b6b440bc44d26677ce';
 let host = 'api.bing.microsoft.com';
@@ -14,6 +15,18 @@ let request_params = {
     }
 };
 
+const doesImageExist = async (url) => {
+    const canvas = createCanvas(1, 1);
+    const context = canvas.getContext('2d');
+    try {
+      const data = await loadImage(url);
+      context.drawImage(data, 0, 0);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+  
 const sendQuery = async (textToSearch) => {
     request_params = {
         method : 'GET',
@@ -30,9 +43,11 @@ const sendQuery = async (textToSearch) => {
             });
             response.on('end', function() {
                 let search_results = JSON.parse(body);
-                console.log('Lo buscado: ', search_results);
-                let first_image_url = search_results.value[0].contentUrl;
-                resolve(first_image_url);
+                let indexImage = -1;
+                do{ 
+                    indexImage++;
+                }while(!doesImageExist(search_results.value[indexImage].contentUrl));
+                resolve(search_results.value[indexImage].contentUrl);
             });
         });
         req.on('error', function(err) {
@@ -42,10 +57,4 @@ const sendQuery = async (textToSearch) => {
     });
 };
 
-
-
-
 module.exports = sendQuery;
-
-
-

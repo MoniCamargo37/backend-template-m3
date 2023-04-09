@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 const { isAuthenticated, isAdmin } = require('../middlewares/jwt');
 const fileUploader = require("../config/cloudinary.config");
+const cloudinary = require('cloudinary');
 
 
 
@@ -82,23 +83,43 @@ router.put("/editar-contrasena", isAuthenticated, async (req, res, next) => {
 // @route   PUT /profile/editPhoto
 // @access  Private
 router.put('/editar-foto', isAuthenticated, fileUploader.single('imageUrl'), async (req, res, next) => {
-  try {
-  const { _id: userId } = req.payload;
-  const updatedUser = await User.findByIdAndUpdate(
-  userId,
-  { imageUrl: req.file.path },
-  { new: true }
-  );
+  // try {
+  // const { _id: userId } = req.payload;
+  // const updatedUser = await User.findByIdAndUpdate(
+  // userId,
+  // { imageUrl: req.file.path },
+  // { new: true }
+  // );
   
-  if (!updatedUser) {
-    return res.status(404).json({ message: 'Usuario no existe' });
-  }
+  // if (!updatedUser) {
+  //   return res.status(404).json({ message: 'Usuario no existe' });
+  // }
   
-  res.status(200).json({ message: "Foto actualizada" });
-  } catch (error) {
-  next(error);
-  }
-  });
+  // res.status(200).json({ message: "Foto actualizada" });
+  // } catch (error) {
+  // next(error);
+  // }
+  // });
+
+    const user = req.payload;
+    const { username } = req.body; 
+    if(req.file) {
+        imageUrl = req.file.path;
+    } else {
+        imageUrl = cloudinary.url(user.picture)
+    }
+    try {
+        const userDB = await User.findById(user._id);
+        if(userDB._id.toString() !== user._id) {
+            res.status(403).json({message: 'No tienes permiso para editar este perfil'});
+        } else {
+            const updatedUser = await User.findByIdAndUpdate(user._id, { username, imageUrl }, { new: true })
+            res.status(200).json(updatedUser)
+        } 
+    } catch (error) {
+        console.log(error)
+    }
+});
 
 // router.put("/editar-foto", isAuthenticated, async (req, res, next) => {
 //   const { _id: userId } = req.payload;
