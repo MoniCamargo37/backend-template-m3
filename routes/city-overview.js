@@ -47,13 +47,14 @@ router.get("/:city", async (req, res) => {
           myCity.country = city.split('(')[1].split(')')[0];
           myCity.numSearches = 1;
           openAIResponse = await openAIConnection(
-            "Escribe una larga descripción seria y precisa de dos párrafos sobre la ciudad de " + city + " y sus alrededores con un eslogan final que atraiga visitantes.", 1, 1);
-          myCity.description = openAIResponse.choices;
+            "Escribe una larga descripción seria y precisa de dos párrafos sobre la ciudad de " + city + " y sus alrededores con un eslogan final que atraiga visitantes. Envía al final la latitud y la longitud en este formato: (latitud,longitud)", 1, 1);
+          myCity.description = openAIResponse.choices.split('(')[0];
+          myCity.coordinates = openAIResponse.choices.split('(')[1].split(')')[0];
     
           //Now we need to find the images for this city
-          let image1 = await sendQuery(`Panorámica impresionante de la ciudad de ${city}`);
-          let image2 = await sendQuery(`Parque de la ciudad de ${city}`);
-          let image3 = await sendQuery(`Monumento representativo de la ciudad de ${city}`);
+          let image1 = await sendQuery(`Vista Panorámica de ${myCity.country}, ${myCity.cityName}`);
+          let image2 = await sendQuery(`Lugar histórico de ${myCity.country}, ${myCity.cityName}`);
+          let image3 = await sendQuery(`Monumento  de ${myCity.country}, ${myCity.cityName}`);
           myCity.destinationPics = [image1, image2];
           myCity.itineraryPic = image3;
           await myCity.save();
@@ -105,8 +106,7 @@ router.get("/:id", async (req, res) => {
 // @desc    Delete cityOverview from database
 // @route   DELETE /api/v1/city-overview/:id
 // @access  Private/isAdmin
-router.delete("/delete/:id", isAuthenticated,
-isAdmin, async (req, res) => {
+router.delete("/delete/:id", isAuthenticated, isAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     const deletedCityOverview = await CityOverview.findByIdAndDelete( id );

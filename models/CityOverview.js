@@ -25,7 +25,11 @@ const cityOverviewSchema = new Schema({
   destinationPics: {
     type: [String],
     // required: true
+  },
+  coordinates: {
+    type: String,
   }
+  
 },
 {
   timestamps: true

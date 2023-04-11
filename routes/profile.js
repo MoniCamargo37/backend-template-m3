@@ -82,56 +82,29 @@ router.put("/editar-contrasena", isAuthenticated, async (req, res, next) => {
 // @desc    This route allows the user to edit their profile picture.
 // @route   PUT /profile/editPhoto
 // @access  Private
-router.put('/editar-foto', isAuthenticated, fileUploader.single('imageUrl'), async (req, res, next) => {
-  // try {
-  // const { _id: userId } = req.payload;
-  // const updatedUser = await User.findByIdAndUpdate(
-  // userId,
-  // { imageUrl: req.file.path },
-  // { new: true }
-  // );
-  
-  // if (!updatedUser) {
-  //   return res.status(404).json({ message: 'Usuario no existe' });
-  // }
-  
-  // res.status(200).json({ message: "Foto actualizada" });
-  // } catch (error) {
-  // next(error);
-  // }
-  // });
+router.put('/editar-foto', isAuthenticated, fileUploader.single('image'), async (req, res, next) => {
+  const user = req.payload;
+  const { username } = req.body; 
+  let image;
+  if(req.file) {
+      image = req.file.path;
+  } else {
+      image = cloudinary.url(user.picture);
+  }
+  try {
 
-    const user = req.payload;
-    const { username } = req.body; 
-    if(req.file) {
-        imageUrl = req.file.path;
-    } else {
-        imageUrl = cloudinary.url(user.picture)
-    }
-    try {
-        const userDB = await User.findById(user._id);
-        if(userDB._id.toString() !== user._id) {
-            res.status(403).json({message: 'No tienes permiso para editar este perfil'});
-        } else {
-            const updatedUser = await User.findByIdAndUpdate(user._id, { username, imageUrl }, { new: true })
-            res.status(200).json(updatedUser)
-        } 
-    } catch (error) {
-        console.log(error)
-    }
+    const userDB = await User.findById(user._id);
+      if(userDB._id.toString() !== user._id) {
+          res.status(403).json({message: 'No tienes permiso para editar este perfil'});
+      } else {
+          const updatedUser = await User.findByIdAndUpdate(user._id, { username, image }, { new: true });
+          res.status(200).json(updatedUser);
+      } 
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Ha ocurrido un error al actualizar el perfil' });
+  }
 });
-
-// router.put("/editar-foto", isAuthenticated, async (req, res, next) => {
-//   const { _id: userId } = req.payload;
-//   const { imageUrl } = req.body;
-//   try {
-//     const user = await User.findByIdAndUpdate(userId, { imageUrl }, { new: true });
-//     res.status(200).json({ message: "Imagen de perfil actualizada exitosamente.", user });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
 
 // @desc    This route allows the user to delete their profile picture.
 // @route   DELETE /profile/deletePhoto

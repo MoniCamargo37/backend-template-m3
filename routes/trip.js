@@ -4,6 +4,7 @@ const Trip = require("../models/Trip");
 const Day = require("../models/Day");
 const { isAuthenticated } = require("../middlewares/jwt");
 const sendQuery = require("../utils/bingImageSearch");
+const CityOverview = require("../models/CityOverview");
 
 // @desc    Get all trip plan
 // @route   GET /api/v1/trip plan
@@ -50,14 +51,17 @@ router.get("/:tripId", isAuthenticated, async (req, res, next) => {
 router.post("/actividades", async (req, res) => {
   try {
     // const { _id: userId } = req.payload;
-    const { city, tripDuration, numTravellers, monthOfTrip, tripType, budget } =
-      req.body;
+    const { city, tripDuration, numTravellers, monthOfTrip, tripType, budget, searchedCity } = req.body;
+
+    const response = await CityOverview.findOne({ cityName: city }).select('coordinates'); //Javi
+    const coordinates = response.coordinates;
+
     const AIresponse = await openAIConnection(
       `Comprender y aplicar perfectamente las reglas para planificar un itinerario de viaje no tiene por qué ser una tarea tediosa. Quienes son capaces de diseñar planes de viaje emocionantes, seguros y funcionales pueden ser muy valorados por los viajeros de todo el mundo. Dicho esto, te desafío a que, con la ayuda del modelo de IA GPT 3.5, crees un programa capaz de planear itinerarios de viaje adaptados a las necesidades de tus clientes, cumpliendo todas las siguientes especificaciones:
       - El programa debe sugerir actividades para cada día del viaje, especificando la duración de cada una.
       - Las actividades propuestas para un mismo día deben estar a una distancia máxima de 10 kilómetros entre ellas.
       - Si el viaje tiene una duración de tres días o más, el programa deberá sugerir al menos una actividad fuera de la ciudad.
-      - Si no hay actividades disponibles en la ciudad, el programa debe incluir actividades fuera de la ciudad a una distancia máxima de 100 kilómetros.
+      - Si no hay actividades disponibles en la ciudad, el programa debe incluir actividades fuera de la ciudad a una distancia máxima de 100 kilómetros de las coordenadas.
       - Las actividades sugeridas deben ser apropiadas para la época del mes en la que se realizará el viaje; no se deben proponer actividades de agua o esquí fuera de temporada.
       - El tiempo total de las actividades de cada día debe tener un mínimo de 6 horas y un máximo de 8 horas o serás despedido.
       - El formato de devolución de las sugerencias deberá ser exactamente el siguiente (no cambies el orden ni el formato):
@@ -85,7 +89,9 @@ router.post("/actividades", async (req, res) => {
         Con estos requisitos en cuenta, crea un planificador de viajes inteligente y efectivo que tus clientes agradecerán. ¡Manos a la obra!
 
     Petición del cliente:
-    Quiero un plan sin cenas románticas porque tengo pensión completa en el hotel para ${tripDuration} días en la ciudad de ${city} que sean apropiadas para un viaje ${tripType} para ${numTravellers} viajeros de estilo durante la época del mes número ${monthOfTrip} del calendario.`, 0, 1);
+    Quiero un plan sin cenas románticas porque tengo pensión completa en el hotel para ${tripDuration} días en la ciudad de ${city} que tiene estas coordenadas ${coordinates} que sean apropiadas para un viaje ${tripType} para ${numTravellers} viajeros durante la época del mes número ${monthOfTrip} del calendario. Ajusta el plan a un importe de ${budget}€`, 0, 1);
+      //Javi
+    console.log("La city de las actividades: ", searchedCity);
     const AIresponseArray = AIresponse.choices.split(/\||\n/);
 
     console.log("La respuesta de openAI", AIresponseArray);
