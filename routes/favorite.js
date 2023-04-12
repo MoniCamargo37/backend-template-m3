@@ -5,68 +5,66 @@ const { isAuthenticated } = require('../middlewares/jwt');
 // @desc    Get all favorites for a specific trip
 // @route   GET /favorite/trip/:tripId
 // @access  Private
-router.get('/trip/:tripId', isAuthenticated, async (req, res, next) => {
+
+
+router.get('/city-overview/:cityId', isAuthenticated, async (req, res, next) => {
   try {
-    const { tripId } = req.params;
-    const favoriteTrip = await Favorite.find({ trip: tripId });
-    res.status(200).json(favoriteTrip);
+    const { cityId } = req.params;
+    const favoriteCityOverview = await Favorite.find(({ cityOverview: cityId }));
+    res.status(200).json(favoriteCityOverview);
   } catch (error) {
     next(error);
   }
 });
 
-// @desc    Create a new favorite for a specific trip
-// @route   POST /favorite
+//GET ALL FAVORITE
+router.get('/', isAuthenticated, async (req, res, next) => {
+  const userId = req.payload._id;
+  try {
+      const userDB = await User.findById(userId);
+      const favorite = await Favorite.find({user: userId})
+      .populate({
+          // path: 'cityOverview',
+          populate: {path: 'itineraryPic', path: 'cityName'}
+      });
+      const preFavorite = JSON.parse(JSON.stringify(favorite));
+      const favoriteCityoverview = await Promise.all(preFavorite.map(async (cityOverview) => {
+          return await getFavorites(cityOverview.cityName, userDB);
+      }))
+      res.status(200).json({
+          user: {
+              username: userDB.username,
+              image: userDB.image
+          },
+          favoriteCityoverview
+      })
+  } catch (error) {
+      console.log(error)
+  }
+});
+
+
+// @desc    Change favorite state/ 
+// @route   POST /favorite/:cityoverviewId
 // @access  Private
-router.post('/', isAuthenticated, async (req, res, next) => {
+router.post('/:cityoverviewId', isAuthenticated, async (req, res, next) => {
+  const { cityoverviewId } = req.params;
+  const userId = req.payload._id;
   try {
-    const { _id: user_id } = req.payload;
-    const { trip, title, description } = req.body;
-    if (!trip || !title || !description) {
-      return res.status(400).json({ message: 'Missing required data' });
-    }
-    const createdFavorite = await Favorite.create({ trip, title, description, user: user_id });
-    res.status(201).json(createdFavorite);
+       const favorite = await Favorite.findOne({cityoverviewId, userId});
+       if(!like) {
+          const newFavorite = await Favorite.create({cityoverviewId, userId});
+          res.status(200).json(newFavorite);
+       } else {
+          const newFavorite = await Favorite.findOneAndDelete({cityoverviewId, userId});
+           res.status(200).json(newFavorite);  
+       }
   } catch (error) {
-    next(error);
+      console.log(error);
   }
 });
 
+
+
 module.exports = router;
 
-// @desc    Delete one favorite
-// @route   DELETE /favorite/:favoriteId
-// @access  User
-// router.delete('/:favoriteId', isAuthenticated, async (req, res, next) => {
-//   const { favoriteId } = req.params
-//   try {
-//       const deleteFavorite = await Favorite.findByIdAndDelete(favoriteId)
-//       res.status(201).json(deleteFavorite)
-//   } catch (error) {
-//       next(error)
-//   }
-// });
-
-
-// @desc    Delete one favorite
-// @route   DELETE /favorite/:favoriteId
-// @access  User
-router.delete('/:favoriteId', isAuthenticated, async (req, res, next) => {
-    try {
-      const { favoriteId } = req.params;
-      const { _id: user_id } = req.payload;
-      const favorite = await Favorite.findById(favoriteId);
-      if (!favorite) {
-        return res.status(404).json({ message: 'Favorite not found' });
-      }
-      if (favorite.user.toString() !== user_id) {
-        return res.status(403).json({ message: 'You are not authorized to delete this favorite' });
-      }
-      await favorite.remove();
-      res.status(204).end();
-    } catch (error) {
-      next(error);
-    }
-  });
-  
-module.exports = router;

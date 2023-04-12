@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Favorite = require('../models/Favorite');
 const saltRounds = 10;
 const { isAuthenticated, isAdmin } = require('../middlewares/jwt');
 const fileUploader = require("../config/cloudinary.config");
@@ -15,8 +16,14 @@ const cloudinary = require('cloudinary');
 router.get("/", isAuthenticated, async (req, res, next)=> {
   const { _id } = req.payload;
   try {
-    const user = await User.findById(_id);
-    res.status(200).json({ user });
+    const userDatabase = await User.findById(_id);
+    // res.status(200).json({ user });
+    res.status(200).json({
+      user: {
+          username: userDatabase.username,
+          image: userDatabase.image
+      },
+  })
   } catch (error) {
     next(error);
   }
@@ -92,7 +99,6 @@ router.put('/editar-foto', isAuthenticated, fileUploader.single('image'), async 
       image = cloudinary.url(user.picture);
   }
   try {
-
     const userDB = await User.findById(user._id);
       if(userDB._id.toString() !== user._id) {
           res.status(403).json({message: 'No tienes permiso para editar este perfil'});
@@ -105,6 +111,9 @@ router.put('/editar-foto', isAuthenticated, fileUploader.single('image'), async 
       res.status(500).json({ message: 'Ha ocurrido un error al actualizar el perfil' });
   }
 });
+
+
+
 
 // @desc    This route allows the user to delete their profile picture.
 // @route   DELETE /profile/deletePhoto

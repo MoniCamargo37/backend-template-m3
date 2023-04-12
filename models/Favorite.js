@@ -6,11 +6,11 @@ const favoriteSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
-  trip: {
+ 
+  cityOverview: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Trip',
-
-  }
+    ref: 'CityOverview',
+  },
 },
 {
   timestamps: true
