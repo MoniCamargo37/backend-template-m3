@@ -43,6 +43,10 @@ const sendQuery = async (textToSearch) => {
             });
             response.on('end', function() {
                 let search_results = JSON.parse(body);
+                console.log('Lo que hace reventar la app: ', search_results);
+                if(search_results.error){
+                    return error.code;
+                } 
                 let indexImage = -1;
                 do{ 
                     indexImage++;
