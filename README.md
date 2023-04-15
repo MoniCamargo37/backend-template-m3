@@ -1,7 +1,7 @@
 # Project's name REST API
 ## Description
 
-This is a the backend repository for the React application `app's name`.
+This is a the backend repository for the React application `Trippo`.
 
 ---
 
@@ -37,10 +37,26 @@ Users in the database have the following properties:
 
 ```js
 {
-  "username": String,
-  "email": String,
-  "hashedPassword": String
-}
+  email: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  hashedPassword: {
+    type: String,
+    required: true
+  },
+  username: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  }
+},
+
 ```
 
 ---

@@ -15,10 +15,11 @@ const isAuthenticated = jwt({
   secret: process.env.TOKEN_SECRET,
   algorithms: ["HS256"],
   requestProperty: 'payload',
-  getToken: getTokenFromHeaders//token
+  getToken: getTokenFromHeaders,
 });
 
 const isAdmin = (req, res, next) => {
+  next(); 
   if (req.payload.role === 'admin') {
     next()
   } else {
@@ -31,4 +32,5 @@ module.exports = {
   isAuthenticated,
   isAdmin
 }
+
 
