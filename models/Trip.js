@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const tripSchema = new Schema({
+  name: {
+    type: String,
+  },
   city: {
     type: String,
     required: true
