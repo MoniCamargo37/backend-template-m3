@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Restaurant = require('../models/Restaurant');
 
-// Obtener todos los restaurantes
+// bACKLOG Obtener todos los restaurantes
 router.get('/restaurants', async (req, res) => {
   try {
     const restaurants = await Restaurant.find();
@@ -14,7 +14,7 @@ router.get('/restaurants', async (req, res) => {
   }
 });
 
-// Ruta para crear un nuevo restaurante
+// BACKLOGRuta para crear un nuevo restaurante en un fututo
 router.post('/restaurants', async (req, res) => {
   const { name, foodType, city } = req.body;
   const restaurant = new Restaurant({ name, foodType, city });

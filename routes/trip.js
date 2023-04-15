@@ -9,16 +9,6 @@ const CityOverview = require("../models/CityOverview");
 // @desc    Get all trip plan
 // @route   GET /api/v1/trip plan
 // @access  Private/ user
-// router.get('/', isAuthenticated, async (req, res, next) => {
-//   const { _id: userId } = req.payload;
-//   try {
-//     const trips = await Trip.find({ user: userId });
-//     res.status(200).json(trips);
-//   } catch (error) {
-//     next(error)
-//   }
-// });
-
 router.get("/", isAuthenticated, async (req, res, next) => {
   const { _id: userId } = req.payload;
   try {
@@ -50,7 +40,6 @@ router.get("/:tripId", isAuthenticated, async (req, res, next) => {
 // @access   Private/ user
 router.post("/actividades", async (req, res) => {
   try {
-    // const { _id: userId } = req.payload;
     const { city, tripDuration, numTravellers, monthOfTrip, tripType, budget, searchedCity } = req.body;
 
     const response = await CityOverview.findOne({ cityName: city }).select('coordinates'); //Javi
@@ -90,8 +79,8 @@ router.post("/actividades", async (req, res) => {
 
     Petición del cliente:
     Quiero un plan sin cenas románticas porque tengo pensión completa en el hotel para ${tripDuration} días en la ciudad de ${city} que tiene estas coordenadas ${coordinates} que sean apropiadas para un viaje ${tripType} para ${numTravellers} viajeros durante la época del mes número ${monthOfTrip} del calendario. Ajusta el plan a un importe de ${budget}€`, 0, 1);
-      //Javi
-    console.log("La city de las actividades: ", searchedCity);
+      
+    // console.log("La city de las actividades: ", searchedCity);
     const AIresponseArray = AIresponse.choices.split(/\||\n/);
 
     console.log("La respuesta de openAI", AIresponseArray);
@@ -122,15 +111,11 @@ router.post("/actividades", async (req, res) => {
           );
           day.name = "Día " + index;
           days.push(day);
-          console.log('El día ', index, ' ha sido creado');
-          console.log(day);
           day = new Day();
           index++;
         }
       }
-      console.log("Días: ", days);
     };
-
     await extractingData();
     res.status(200).json({ res: days });
   } catch (error) {
@@ -161,7 +146,6 @@ router.post("/", isAuthenticated, async (req, res, next) => {
       budget: tripPlan.budget,
       days: newDays,
     };
-
     const trip = await Trip.create({ user: userId, ...newTrip });
     res.status(201).json(trip);
   } catch (error) {
@@ -169,7 +153,7 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// @desc    Edit one trip
+// @desc    BACKLOG Edit one trip
 // @route   PUT /api/v1/trip/:tripId
 // @access   Private/ user
 router.put("/:tripId", isAuthenticated, async (req, res, next) => {

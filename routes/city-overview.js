@@ -102,7 +102,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
 // @desc    Delete cityOverview from database
 // @route   DELETE /api/v1/city-overview/:id
 // @access  Private/isAdmin

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-//pienso que no lo voy a usar pero lo dejo por ahora 
+//lo dejo por ahora por si tengo que usarla luego
 router.get("/", async (req, res) => {
   try {
       const Activity = await Activity.find();
@@ -11,12 +11,13 @@ router.get("/", async (req, res) => {
       res.status(500).send("Error en el servidor");
     }
   });
-
-// Route to create a new DayTrip
+  
+// @desc Create a new day trip
+// @route POST /api/v1/day-trips
+// @access Private user
  router.post('/', async (req, res) => {
   const { activity1, activity2, activity3 } = req.body;
   const dayTrip = new DayTrip({ activity1, activity2, activity3 });
-
   try {
     await dayTrip.save();
     res.status(201).json(dayTrip);

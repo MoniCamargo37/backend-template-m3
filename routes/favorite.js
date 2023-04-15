@@ -6,7 +6,6 @@ const { isAuthenticated } = require('../middlewares/jwt');
 // @route   GET /favorite/trip/:tripId
 // @access  Private
 
-
 router.get('/city-overview/:cityId', isAuthenticated, async (req, res, next) => {
   try {
     const { cityId } = req.params;
@@ -17,7 +16,9 @@ router.get('/city-overview/:cityId', isAuthenticated, async (req, res, next) => 
   }
 });
 
-//GET ALL FAVORITE
+// @desc Get all favorite cityOverviews of a user
+// @route GET /api/v1/favorite
+// @access Private
 router.get('/', isAuthenticated, async (req, res, next) => {
   const userId = req.payload._id;
   try {
@@ -43,10 +44,9 @@ router.get('/', isAuthenticated, async (req, res, next) => {
   }
 });
 
-
-// @desc    Change favorite state/ 
-// @route   POST /favorite/:cityoverviewId
-// @access  Private
+// @desc Add or remove a cityOverview from user favorites
+// @route POST /api/v1/favorite/:cityoverviewId
+// @access Private
 router.post('/:cityoverviewId', isAuthenticated, async (req, res, next) => {
   const { cityoverviewId } = req.params;
   const userId = req.payload._id;

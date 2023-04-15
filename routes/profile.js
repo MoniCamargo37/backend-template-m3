@@ -2,13 +2,10 @@ const router = require('express').Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Favorite = require('../models/Favorite');
 const saltRounds = 10;
 const { isAuthenticated, isAdmin } = require('../middlewares/jwt');
 const fileUploader = require("../config/cloudinary.config");
 const cloudinary = require('cloudinary');
-
-
 
 // @desc    is responsible for getting the user's profile page.
 // @route   GET /profile
@@ -17,7 +14,6 @@ router.get("/", isAuthenticated, async (req, res, next)=> {
   const { _id } = req.payload;
   try {
     const userDatabase = await User.findById(_id);
-    // res.status(200).json({ user });
     res.status(200).json({
       user: {
           username: userDatabase.username,
@@ -29,11 +25,9 @@ router.get("/", isAuthenticated, async (req, res, next)=> {
   }
 });
 
-
 // @desc    This route allows a user to change their password.
 // @route   PUT /profile/cambiar-contrasena
 // @access  Private
-
 router.put("/editar-contrasena", isAuthenticated, async (req, res, next) => {
   const { _id: userId } = req.payload;
   const { currentPassword, newPassword, newPasswordConfirmation } = req.body;
@@ -107,13 +101,10 @@ router.put('/editar-foto', isAuthenticated, fileUploader.single('image'), async 
           res.status(200).json(updatedUser);
       } 
   } catch (error) {
-      console.log(error);
+      // console.log(error);
       res.status(500).json({ message: 'Ha ocurrido un error al actualizar el perfil' });
   }
 });
-
-
-
 
 // @desc    This route allows the user to delete their profile picture.
 // @route   DELETE /profile/deletePhoto
@@ -121,7 +112,6 @@ router.put('/editar-foto', isAuthenticated, fileUploader.single('image'), async 
 router.delete("/profile/borrar-foto", isAuthenticated, async (req, res, next) => {
   try {
     const user = await User.findById(req.payload);
-
     // Verificar si la imagen personalizada está presente
     if (user.imageUrl !== "https://media.vogue.mx/photos/62e19b3d4a4bcdd2c09a7c1b/2:3/w_1920,c_limit/GettyImages-1155131913-2.jpg") {
       // Si la imagen personalizada está presente, eliminarla
@@ -130,9 +120,7 @@ router.delete("/profile/borrar-foto", isAuthenticated, async (req, res, next) =>
       // Si la imagen personalizada no está presente, eliminar la imagen por defecto
       user.imageUrl = "https://media.vogue.mx/photos/62e19b3d4a4bcdd2c09a7c1b/2:3/w_1920,c_limit/GettyImages-1155131913-2.jpg";
     }
-
     await user.save();
-
     res.status(200).json({ message: "Image URL deleted" });
   } catch (error) {
     next(error);
