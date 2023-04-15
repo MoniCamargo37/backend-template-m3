@@ -158,12 +158,13 @@ router.post("/", isAuthenticated, async (req, res, next) => {
 // @access   Private/ user
 router.put("/:tripId", isAuthenticated, async (req, res, next) => {
   const { tripId } = req.params;
+  const { name, monthOfTrip, numTravellers, budget } = req.body;
   try {
-    const response = await Trip.findByIdAndUpdate(tripId, req.body, {
-      new: true,
-    });
-    // res.redirect(`/courses/${tripId}`) //==> only to see on Postman if we edited right
-    res.status(204).json({ message: "OK" });
+    const updatedTrip = await Trip.findByIdAndUpdate(tripId, { name: name, monthOfTrip: monthOfTrip, numTravellers: numTravellers, budget: budget }, { new: true });
+    if (!updatedTrip) {
+      return res.status(404).json({ error: "Viaje no encontrado" });
+    }
+    res.status(200).json(updatedTrip);
   } catch (error) {
     next(error);
   }
