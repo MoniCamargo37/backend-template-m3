@@ -1,7 +1,7 @@
 const https = require("https");
 const { createCanvas, loadImage } = require('canvas');
 
-let subscriptionKey = 'b714d22be1d240b6b440bc44d26677ce';
+let subscriptionKey = process.env.BING_IMAGE_KEY;
 let host = 'api.bing.microsoft.com';
 let path = '/v7.0/images/search';
 let search = '';
