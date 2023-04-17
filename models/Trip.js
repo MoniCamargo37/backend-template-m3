@@ -36,7 +36,7 @@ const tripSchema = new Schema({
       validator: function(value) {
         return value >= 100 && value <= 10000;
       },
-      message: 'El presupuesto debe estar entre 200 y 10000 euros.'
+      message: 'El presupuesto debe estar entre 100 y 10000 euros.'
     }
   },
   days: [

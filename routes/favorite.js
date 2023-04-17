@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Favorite = require('../models/Favorite')
 const { isAuthenticated } = require('../middlewares/jwt');
 
+//BACKLOG
 // @desc    Get all favorites for a specific trip
 // @route   GET /favorite/trip/:tripId
 // @access  Private
@@ -16,6 +17,7 @@ router.get('/city-overview/:cityId', isAuthenticated, async (req, res, next) => 
   }
 });
 
+//BACKLOG
 // @desc Get all favorite cityOverviews of a user
 // @route GET /api/v1/favorite
 // @access Private
@@ -44,6 +46,7 @@ router.get('/', isAuthenticated, async (req, res, next) => {
   }
 });
 
+//BACKLOG
 // @desc Add or remove a cityOverview from user favorites
 // @route POST /api/v1/favorite/:cityoverviewId
 // @access Private

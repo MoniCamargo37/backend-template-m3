@@ -14,7 +14,7 @@ router.get('/restaurants', async (req, res) => {
   }
 });
 
-// BACKLOGRuta para crear un nuevo restaurante en un fututo
+// BACKLOG Ruta para crear un nuevo restaurante en un fututo
 router.post('/restaurants', async (req, res) => {
   const { name, foodType, city } = req.body;
   const restaurant = new Restaurant({ name, foodType, city });

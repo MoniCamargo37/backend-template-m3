@@ -26,23 +26,21 @@ router.get("/:tripId", isAuthenticated, async (req, res, next) => {
   const { tripId } = req.params;
   const { _id: userId } = req.payload;
   try {
-    const trip = await Trip.findById({ _id: tripId, user: userId }).populate(
-      "days"
-    );
+    const trip = await Trip.findById({ _id: tripId, user: userId }).populate("days");
     res.status(200).json(trip);
   } catch (error) {
     next(error);
   }
 });
 
-// @desc     create trip plan activities.
+// @desc     create trip plan activities/create actividades
 // @route   POST  /api/v1/trip/actividades
 // @access   Private/ user
 router.post("/actividades", async (req, res) => {
   try {
     const { city, tripDuration, numTravellers, monthOfTrip, tripType, budget, searchedCity } = req.body;
 
-    const response = await CityOverview.findOne({ cityName: city }).select('coordinates'); //Javi
+    const response = await CityOverview.findOne({ cityName: city }).select('coordinates');
     const coordinates = response.coordinates;
 
     const AIresponse = await openAIConnection(
@@ -124,7 +122,7 @@ router.post("/actividades", async (req, res) => {
   }
 });
 
-// @desc    Create one trip plan
+// @desc    Create one trip plan and save if user wants to save it 
 // @route   POST /api/v1/trip
 // @access   Private/ user
 router.post("/", isAuthenticated, async (req, res, next) => {
@@ -153,14 +151,14 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// @desc    BACKLOG Edit one trip
+// @desc    Edit the name trip and numTravellers of  one trip 
 // @route   PUT /api/v1/trip/:tripId
 // @access   Private/ user
 router.put("/:tripId", isAuthenticated, async (req, res, next) => {
   const { tripId } = req.params;
-  const { name, monthOfTrip, numTravellers, budget } = req.body;
+  const { name, numTravellers, budget } = req.body;
   try {
-    const updatedTrip = await Trip.findByIdAndUpdate(tripId, { name: name, monthOfTrip: monthOfTrip, numTravellers: numTravellers, budget: budget }, { new: true });
+    const updatedTrip = await Trip.findByIdAndUpdate(tripId, { name: name, numTravellers: numTravellers, budget: budget }, { new: true });
     if (!updatedTrip) {
       return res.status(404).json({ error: "Viaje no encontrado" });
     }

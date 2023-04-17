@@ -86,21 +86,21 @@ router.get("/:city", async (req, res) => {
 // @desc    Get city by ID
 // @route   GET /api/v1/city-overview/:id
 // @access  Public
-router.get("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const cityOverview = await CityOverview.findById(id);
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const cityOverview = await CityOverview.findById(id);
 
-    if (!cityOverview) {
-      return res.status(404).json({ msg: "No se ha encontrado este destino" });
-    }
+//     if (!cityOverview) {
+//       return res.status(404).json({ msg: "No se ha encontrado este destino" });
+//     }
 
-    res.json(cityOverview);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
+//     res.json(cityOverview);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 // @desc    Delete cityOverview from database
 // @route   DELETE /api/v1/city-overview/:id
