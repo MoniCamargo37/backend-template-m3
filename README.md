@@ -204,8 +204,8 @@ const daySchema = new Schema([
 
 ## Useful links
 
-- [Presentation slides]()
-- [Frontend repository]()
+- [Presentation slides](https://1drv.ms/p/s!Akm3TPUfj8PLhnREb--vgYQ0EYuP?e=TeqChp)
+- [Frontend repository](https://github.com/MoniCamargo37/FRONTEND-TRIPPO-m3)
 - [Frontend deploy]()
 - [Deployed REST API](https://trippo.fly.dev/)
 
