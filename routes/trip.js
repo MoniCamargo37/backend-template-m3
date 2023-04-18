@@ -81,7 +81,7 @@ router.post("/actividades", async (req, res) => {
     // console.log("La city de las actividades: ", searchedCity);
     const AIresponseArray = AIresponse.choices.split(/\||\n/);
 
-    console.log("La respuesta de openAI", AIresponseArray);
+    // console.log("La respuesta de openAI", AIresponseArray);
 
     let index = 1;
     let days = [];

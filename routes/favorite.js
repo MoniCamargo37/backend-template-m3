@@ -42,7 +42,7 @@ router.get('/', isAuthenticated, async (req, res, next) => {
           favoriteCityoverview
       })
   } catch (error) {
-      console.log(error)
+      console.error(error)
   }
 });
 
