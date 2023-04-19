@@ -44,33 +44,34 @@ router.post("/actividades", async (req, res) => {
     const coordinates = response.coordinates;
 
     const AIresponse = await openAIConnection(
-      `Comprender y aplicar perfectamente las reglas para planificar un itinerario de viaje no tiene por qué ser una tarea tediosa. Quienes son capaces de diseñar planes de viaje emocionantes, seguros y funcionales pueden ser muy valorados por los viajeros de todo el mundo. Dicho esto, te desafío a que, con la ayuda del modelo de IA GPT 3.5, crees un programa capaz de planear itinerarios de viaje adaptados a las necesidades de tus clientes, cumpliendo todas las siguientes especificaciones:
-      - El programa debe sugerir actividades para cada día del viaje, especificando la duración de cada una.
-      - Las actividades propuestas para un mismo día deben estar a una distancia máxima de 10 kilómetros entre ellas.
-      - Si el viaje tiene una duración de tres días o más, el programa deberá sugerir al menos una actividad fuera de la ciudad.
-      - Si no hay actividades disponibles en la ciudad, el programa debe incluir actividades fuera de la ciudad a una distancia máxima de 100 kilómetros de las coordenadas.
-      - Las actividades sugeridas deben ser apropiadas para la época del mes en la que se realizará el viaje; no se deben proponer actividades de agua o esquí fuera de temporada.
-      - El tiempo total de las actividades de cada día debe tener un mínimo de 6 horas y un máximo de 8 horas o serás despedido.
+      `Eres un agente de viajes experto en organizar actividades para los viajeros que te piden consejo sobre qué hacer en su destino. Eres muy estricto y no te saltas tus normas, porque eso te asegura ser el mejor organizador de actividades del mundo.
+      Las reglas por las que te riges para planificar las actividades diarias son estas:
+      - Debes sugerir actividades para cada día del viaje, especificando la duración de cada una.
+      - Las actividades propuestas dentro del mismo día deben estar a una distancia máxima de 20 kilómetros entre ellas.
+      - Si el viaje del cliente tiene una duración de tres días o más, debes sugerir al menos una actividad fuera de la ciudad.
+      - Si ninguna actividad dentro de un día supera las 3 horas, debes incluir 3 actividades.
+      - Si no hay actividades disponibles en la ciudad, debes incluir actividades fuera de la ciudad a una distancia máxima de 100 kilómetros de la ciudad destino del viajero.
+      - Debes sugerir actividades apropiadas a la época del mes del viaje; no se deben proponer actividades de agua o esquí fuera de temporada.
+      - El tiempo sumado de las actividades de cada día debe estar entre 6 horas y 8 horas (incluidas).
       - El formato de devolución de las sugerencias deberá ser exactamente el siguiente (no cambies el orden ni el formato):
         día 1:
         actividad:
-        Latitud:
-        Longitud:
         frase:
         duración:
         actividad: 
-        Latitud:
-        Longitud:
         frase: 
         duración: 
         fin del día
         día 2: 
         actividad:
-        Latitud:
-        Longitud:
         frase:
         duración:
         ...
+        día 7: 
+        actividad:
+        frase:
+        duración:
+        fin del día
       
         Por último, asegúrate de que el programa no incluya recomendaciones de cenas (o estarás despedido para siempre) y de que se adapte a las necesidades del cliente, quien especificará el número de personas que viajan, el estilo de viaje y la duración del viaje.
         Con estos requisitos en cuenta, crea un planificador de viajes inteligente y efectivo que tus clientes agradecerán. ¡Manos a la obra!
@@ -88,8 +89,11 @@ router.post("/actividades", async (req, res) => {
       let newActivity = { name: "", description: "", duration: "", latitude: 0, longitude: 0 };
 
       for (const phrase of AIresponseArray) {
+        console.log('La IA: ', phrase);
         if (phrase.includes("Actividad: ")) {
           newActivity.name = phrase.replace("Actividad: ", "");
+        } else if (phrase.includes("Actividad ")) {
+          newActivity.name = phrase.split(':')[1];
         } else if (phrase.includes("Frase: ")) {
           newActivity.description = phrase.replace("Frase: ", "");
         } else if (phrase.includes("Latitud: ")) {
