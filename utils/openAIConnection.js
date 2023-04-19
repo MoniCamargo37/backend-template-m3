@@ -19,7 +19,6 @@ async function consultaOpenAI(text, temperature, options){
     });
     return { tokens: completion.data.usage.total_tokens, choices: completion.data.choices[0].message.content};
   } catch (error) {
-      // console.log("Hay un error");
     return { tokens: 0, choices: 0};
   }
 }
