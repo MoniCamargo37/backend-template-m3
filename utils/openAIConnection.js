@@ -1,7 +1,7 @@
 const { Configuration, OpenAIApi } = require("openai");
 
 async function consultaOpenAI(text, temperature, options){
-  let maxTokens = 1500 - Math.round(text.length / 4);
+  let maxTokens = 1500;
   const configuration = new Configuration({
     organization: process.env.OPENAI_ORGANIZATION,
     apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,

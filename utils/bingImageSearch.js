@@ -5,11 +5,12 @@ let subscriptionKey = process.env.BING_IMAGE_KEY;
 let host = 'api.bing.microsoft.com';
 let path = '/v7.0/images/search';
 let search = '';
+let countryCode = 'ES';
 
 let request_params = {
     method : 'GET',
     hostname : host,
-    path : path + '?q=' + encodeURIComponent(search),
+    path: `${path}?q=${encodeURIComponent(search)}&mkt=es-${countryCode}&license=public&size=small`,
     headers : {
       'Ocp-Apim-Subscription-Key' : subscriptionKey,
     }
