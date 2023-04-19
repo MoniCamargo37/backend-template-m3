@@ -60,9 +60,7 @@ router.get("/:city", async (req, res) => {
           await myCity.save();
           return res.status(200).send(myCity);
         }    
-
-    cityOverview.numSearches++;
-    
+    cityOverview.numSearches++;  
     try {
       // Update numSearches for the selected city
       cityOverview = await CityOverview.findOneAndUpdate(
@@ -70,7 +68,6 @@ router.get("/:city", async (req, res) => {
         { $inc: { numSearches: 1 } },
         { new: true }
       );
-
       res.json(cityOverview);
     } catch (err) {
       console.error(err.message);
@@ -81,26 +78,6 @@ router.get("/:city", async (req, res) => {
     res.status(500).send("Error en el servidor" + err.message);
   }
 });
-
-
-// @desc    Get city by ID
-// @route   GET /api/v1/city-overview/:id
-// @access  Public
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const cityOverview = await CityOverview.findById(id);
-
-//     if (!cityOverview) {
-//       return res.status(404).json({ msg: "No se ha encontrado este destino" });
-//     }
-
-//     res.json(cityOverview);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server Error");
-//   }
-// });
 
 // @desc    Delete cityOverview from database
 // @route   DELETE /api/v1/city-overview/:id
@@ -115,9 +92,6 @@ router.delete("/delete/:id", isAuthenticated, isAdmin, async (req, res) => {
     res.status(500).send("Error en el servidor: " + err.message);
   }
 });
-
-
-
 
 module.exports = router;
 

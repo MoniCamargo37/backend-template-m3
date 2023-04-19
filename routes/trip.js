@@ -78,10 +78,7 @@ router.post("/actividades", async (req, res) => {
     Petición del cliente:
     Quiero un plan sin cenas románticas porque tengo pensión completa en el hotel para ${tripDuration} días en la ciudad de ${city} que tiene estas coordenadas ${coordinates} que sean apropiadas para un viaje ${tripType} para ${numTravellers} viajeros durante la época del mes número ${monthOfTrip} del calendario. Ajusta el plan a un importe de ${budget}€`, 0, 1);
       
-    // console.log("La city de las actividades: ", searchedCity);
     const AIresponseArray = AIresponse.choices.split(/\||\n/);
-
-    // console.log("La respuesta de openAI", AIresponseArray);
 
     let index = 1;
     let days = [];
